@@ -1,0 +1,105 @@
+
+.sidebar {
+  width: 260px;
+  height: 100auto;
+
+  background: #121212;
+  border-right: 1px solid rgba(255,255,255,0.08);
+
+  display: flex;
+  flex-direction: column;
+  padding: 30px 22px;
+
+  color: var(--ios-text-main);
+}
+
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 40px;
+}
+
+.restaurant-icon {
+  width: 46px;
+  height: 46px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 12px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 24px;
+}
+
+.restaurant-name {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.restaurant-sub {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ios-text-muted);
+}
+
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.menu-item {
+  width: 100%;
+  background: none;
+  border: none;
+
+  color: #b5b5b5;
+  text-align: left;
+
+  padding: 12px 14px;
+  border-radius: 12px;
+
+  font-size: 15px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  transition: 0.2s ease;
+}
+
+.menu-item:hover {
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+}
+
+.menu-item.active {
+  background: #513f2a;
+  color: #fff;
+}
+
+
+.sidebar-separator {
+  margin: 30px 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+}
+
+
+.sidebar-footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.icon {
+  opacity: 0.8;
+}

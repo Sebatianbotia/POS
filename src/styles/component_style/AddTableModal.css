@@ -1,0 +1,106 @@
+.addtable-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 300;
+  animation: fadeIn 0.2s ease;
+}
+
+.addtable-box {
+  position: relative;
+  background: rgba(30,30,30,0.9);
+  border-radius: 18px;
+  padding: 32px;
+  width: 380px;
+  box-shadow: 0 4px 22px rgba(0,0,0,0.35);
+
+  animation: modalSlide 0.35s ease forwards;
+}
+
+@keyframes modalSlide {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.addtable-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+
+  color: white;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.addtable-close:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.addtable-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.addtable-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.addtable-label {
+  font-size: 13px;
+  color: #cfcfcf;
+}
+
+.addtable-input {
+  padding: 12px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 12px;
+  color: white;
+  outline: none;
+}
+
+.addtable-input:focus {
+  border-color: var(--ios-accent);
+}
+
+.addtable-submit {
+  margin-top: 12px;
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--ios-accent);
+  color: #191919;
+
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.addtable-submit:hover {
+  background: #ffbe66;
+}

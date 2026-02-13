@@ -1,0 +1,156 @@
+
+.admin-container {
+  flex: 1;
+  padding: 32px 40px;
+  color: var(--ios-text-main);
+
+
+  background: radial-gradient(
+      ellipse at 20% 30%,
+      rgba(252, 173, 64, 0.1),
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at 80% 70%,
+      rgba(252, 173, 64, 0.01),
+      transparent 65%
+    ), var(--ios-bg-2);
+
+}
+
+.tabledata-overlay {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  backdrop-filter: blur(12px);
+  background: rgba(0,0,0,0.7);
+
+  z-index: 200;
+}
+
+
+
+.admin-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.admin-title {
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.admin-subtitle {
+  font-size: 15px;
+  color: var(--ios-text-muted);
+  margin-bottom: 15px;
+}
+
+
+.admin-filters {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 25px;
+  justify-content: center;
+}
+
+.filter-btn {
+  padding: 8px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--ios-text-main);
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.filter-btn:hover {
+  transform: scale(1.03);
+  border-color: var(--glass-border);
+}
+
+.filter-btn.active {
+  background: var(--ios-accent);
+  color: #05112D;
+}
+
+.filter-btn.green { border-top: 2px solid #48d17a; }
+.filter-btn.blue { border-top: 2px solid #4ea3ff; }
+.filter-btn.yellow { border-top: 2px solid #d4b15c; }
+
+
+.table-actions{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+}
+
+.add-table-btn {
+ 
+  padding: 12px 20px;
+  border-radius: 20px;
+  background: var(--ios-accent);
+  color: #05112D;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: var(--shadow-soft);
+  transition: 0.2s ease;
+}
+
+.join-tables-btn{
+
+  padding: 12px 20px;
+  border-radius: 20px;
+  background: var(--ios-accent);
+  color: #05112D;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: var(--shadow-soft);
+  transition: 0.2s ease;
+}
+
+.add-table-btn:hover {
+  background: #e0c070;
+}
+
+.join-tables-btn:hover{
+   background: #e0c070;
+}
+
+.plus {
+  font-size: 18px;
+}
+
+
+.room-title {
+  margin: 25px 0 18px 0;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.tables-grid {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 30px;
+    justify-content: center;
+}
