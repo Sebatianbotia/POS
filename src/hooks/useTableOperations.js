@@ -51,7 +51,7 @@ export function useTableOperations() {
 
         const mergedItems = Array.from(map.values());
 
-        const newTotal = mergedItems.reduce(
+        const subtotal = mergedItems.reduce(
         (sum, p) => sum + Number(p.price) * Number(p.qty),
         0
         );
@@ -59,7 +59,7 @@ export function useTableOperations() {
         return {
         ...mesa,
         items: mergedItems,
-        totalBill: Number(newTotal.toFixed(2)),
+        totalBill: Number(subtotal.toFixed(2)),
         };
     });
     }, []);

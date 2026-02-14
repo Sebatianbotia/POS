@@ -47,10 +47,10 @@ export default function TableData({ mesa, updateMesaState, close, setShowOrder }
     close();
   };
 
-  // ✅ totalBill siempre numérico para evitar null/undefined
+  // ✅ totalBill es SOLO subtotal (sin impuestos)
   const bill = Number(totalBill ?? 0);
-  const tax = bill * 0.0825;
-  const grandTotal = bill * 1.0825;
+  const tax = bill * 0.10;
+  const grandTotal = bill + tax;
 
   return (
     <div className="tabledata-container">
@@ -127,7 +127,7 @@ export default function TableData({ mesa, updateMesaState, close, setShowOrder }
                 <span>${bill.toFixed(2)}</span>
               </div>
               <div className="linea">
-                <span>Impuestos (8.25%)</span>
+                <span>Impuestos (10%)</span>
                 <span>${tax.toFixed(2)}</span>
               </div>
 

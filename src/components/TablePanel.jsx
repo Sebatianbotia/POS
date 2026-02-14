@@ -7,6 +7,8 @@ import AddTableModal from './admin/AddTableModal';
 import Order from './Order';
 import { useTableOperations } from '../hooks/useTableOperations'; 
 
+
+
 export default function TablePanel() {
   
     const [selectedTableId, setSelectedTableId] = useState(null);  
@@ -47,10 +49,6 @@ export default function TablePanel() {
     setSelectedTableId(null);
   }
 
-  useEffect(() => {
-  console.log("TOTALS:", mesas.map(m => ({ id: m.id, total: m.totalBill, items: m.items?.length })));
-    }, [mesas]);
-
   function updateMesaState(id, newData) {
     setMesas(prev =>
         prev.map(m => m.id === id ? { ...m, ...newData } : m)
@@ -60,9 +58,6 @@ export default function TablePanel() {
   function handleAddItemsToTable(tableId, newItems) {
     setMesas(prevMesas => addItemsToTable(tableId, newItems, prevMesas));
   }
-  useEffect(() => {
-    console.log("Mesas actualizadas:", mesas);
-  }, [mesas]);
 
   return (
     <div className="admin-container">
@@ -92,7 +87,7 @@ export default function TablePanel() {
       <div className="tables-grid">
         {mesas.map((mesa) => (
           <TableCard
-            key={mesa.number}
+            key={mesa.id}
             mesa={mesa}
             setSelected={setSelectedTableId}
           />

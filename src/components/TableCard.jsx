@@ -8,13 +8,16 @@ export default function TableCard({ mesa, setSelected}) {
   const isFree = state === "disponible";
   const isDirty = state === "requiere_limpieza";
 
+  // Calcular total con impuestos (10%)
+  const subtotal = Number(totalBill ?? 0);
+  const tax = subtotal * 0.10;
+  const totalWithTax = subtotal + tax;
+
   function handleClick(){
     if(isDirty){
       alert("mesa sucia");
     }else{
-
       setSelected(mesa.id);
-      console.log("render TableCard", mesa.id, mesa.totalBill, mesa.items?.length);
     }
   }
 
@@ -39,7 +42,7 @@ export default function TableCard({ mesa, setSelected}) {
           </ul>
 
           <div className="table-total">
-            ${(Number(mesa.totalBill ?? 0)).toFixed(2)}
+            ${totalWithTax.toFixed(2)}
           </div>
         </div>
       )}
