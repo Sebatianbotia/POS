@@ -8,7 +8,6 @@ export default function TableCard({ mesa, setSelected}) {
   const isFree = state === "disponible";
   const isDirty = state === "requiere_limpieza";
 
-  // Calcular total con impuestos (10%)
   const subtotal = Number(totalBill ?? 0);
   const tax = subtotal * 0.10;
   const totalWithTax = subtotal + tax;
@@ -36,9 +35,9 @@ export default function TableCard({ mesa, setSelected}) {
           <h3 className="table-title">{number}</h3>
 
           <ul className="table-info">
-            <li><span className="icon">👤</span> Mesero: {waiter.name}</li>
-            <li><span className="icon">👥</span> {guests} Comensales</li>
-            <li><span className="icon">⏱️</span> {occupiedMinutes} min</li>
+            <li><span className="icon">👤</span> Mesero: {waiter?.name ?? "Sin asignar"}</li>
+            <li><span className="icon">👥</span> {guests ?? 0} Comensales</li>
+            <li><span className="icon">⏱️</span> {occupiedMinutes ?? 0} min</li>
           </ul>
 
           <div className="table-total">

@@ -29,6 +29,28 @@ export function useTableOperations() {
             };
     };
 
+    // Reemplazar items completamente (para Order module)
+    const updateTableItems = useCallback((tableId, newItems, mesas) => {
+      return mesas.map(mesa => {
+        if (mesa.id !== tableId) return mesa;
+
+        // Validar que newItems sea un array
+        const items = Array.isArray(newItems) ? newItems : [];
+
+        // Calcular subtotal
+        const subtotal = items.reduce(
+          (sum, p) => sum + Number(p.price) * Number(p.qty),
+          0
+        );
+
+        return {
+          ...mesa,
+          items: items.length > 0 ? items : null,
+          totalBill: Number(subtotal.toFixed(2)),
+        };
+      });
+    }, []);
+
     const addItemsToTable = useCallback((tableId, newItems, mesas) => {
     return mesas.map(mesa => {
         if (mesa.id !== tableId) return mesa;
@@ -64,5 +86,5 @@ export function useTableOperations() {
     });
     }, []);
 
-    return { openTable, addItemsToTable, closeTable };
+    return { openTable, addItemsToTable, updateTableItems, closeTable };
 }

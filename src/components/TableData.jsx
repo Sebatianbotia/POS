@@ -19,16 +19,15 @@ export default function TableData({ mesa, updateMesaState, close, setShowOrder }
   const isFree = state === "disponible";
   const isBusy = state === "ocupada";
 
-  const username = localStorage.getItem('axon_client_name');
-  const userId = localStorage.getItem('userId');
+  const username = localStorage.getItem('axon_client_name') || 'Usuario';
+  const userId = localStorage.getItem('userId') || 'unknown';
 
   const { openTable, closeTable } = useTableOperations();
 
-  // ✅ items derivados de mesa (bien)
   const items = mesa.items || [];
 
   const handleOpenTable = () => {
-    const guestsNum = Number(newGuests); // ✅ conversión robusta
+    const guestsNum = Number(newGuests);
     if (!Number.isFinite(guestsNum) || guestsNum <= 0) return;
 
     const updates = openTable(guestsNum, {
@@ -38,7 +37,7 @@ export default function TableData({ mesa, updateMesaState, close, setShowOrder }
 
     updateMesaState(id, updates);
 
-    close(); // ✅ cerrar SOLO una vez
+    close();
   };
 
   const handleChangeState = () => {
@@ -47,7 +46,6 @@ export default function TableData({ mesa, updateMesaState, close, setShowOrder }
     close();
   };
 
-  // ✅ totalBill es SOLO subtotal (sin impuestos)
   const bill = Number(totalBill ?? 0);
   const tax = bill * 0.10;
   const grandTotal = bill + tax;
@@ -69,7 +67,6 @@ export default function TableData({ mesa, updateMesaState, close, setShowOrder }
             min="1"
           />
 
-          {/* ✅ Cambio: NO cerrar doble */}
           <button className="abrir-btn" onClick={handleOpenTable}>
             Abrir Mesa
           </button>
@@ -97,7 +94,6 @@ export default function TableData({ mesa, updateMesaState, close, setShowOrder }
                 <p className="empty-items">Sin productos en el pedido.</p>
               )}
 
-              {/* ✅ key por id, no por index (evita renders raros) */}
               {items.map((p) => (
                 <div key={p.id} className="item-card">
                   <div className="item-info">

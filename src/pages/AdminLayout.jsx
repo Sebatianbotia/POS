@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom';
 
 export default function AdminLayout() {
     const navigate = useNavigate();
-    const restaurante = localStorage.getItem('restaurante')
-    const nombre = localStorage.getItem('axon_client_name')
+    const restaurante = localStorage.getItem('restaurante') || 'Sin nombre'
+    const nombre = localStorage.getItem('axon_client_name') || 'Usuario'
     console.log(restaurante, nombre);
 
     function closeSesion(){

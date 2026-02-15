@@ -26,7 +26,7 @@ export default function TablePanel() {
     
     
   const selectedTable = mesas.find(m => m.id === selectedTableId) || null;
-  const { addItemsToTable } = useTableOperations();
+  const { updateTableItems } = useTableOperations();
 
   function createMesa(newMesa) {
     const mesaConFormato = {
@@ -56,7 +56,7 @@ export default function TablePanel() {
   }
 
   function handleAddItemsToTable(tableId, newItems) {
-    setMesas(prevMesas => addItemsToTable(tableId, newItems, prevMesas));
+    setMesas(prevMesas => updateTableItems(tableId, newItems, prevMesas));
   }
 
   return (
@@ -113,9 +113,13 @@ export default function TablePanel() {
       {showOrder && selectedTable && (
           <div className="tabledata-overlay">
             <Order
-              key={selectedTableId} 
+              key={`order-${selectedTable.id}`}
               mesa={selectedTable}
-              close={() => setShowOrder(false)}
+              close={() => {
+                setShowOrder(false);
+                // Dar tiempo para que React actualice el estado
+                setTimeout(() => setSelectedTableId(null), 100);
+              }}
               addItemsToTable={(items) => handleAddItemsToTable(selectedTable.id, items)}
             />
           </div>

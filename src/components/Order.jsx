@@ -9,12 +9,15 @@ export default function Order({ mesa, close, addItemsToTable }) {
   const [activeCategory, setActiveCategory] = useState("todos");
   const [orderItems, setOrderItems] = useState([]);
 
-  // Inicializar con items existentes cuando se abre
   useEffect(() => {
-    if (Array.isArray(mesa.items) && mesa.items.length > 0) {
+    // Resetear items cuando se abre otra mesa
+    setOrderItems([]);
+    
+    // Si la mesa tiene items, cargarlos
+    if (Array.isArray(mesa?.items) && mesa.items.length > 0) {
       setOrderItems([...mesa.items]);
     }
-  }, [mesa.id]);
+  }, [mesa.id, mesa.items]);
 
   const filteredProducts = useMemo(() => {
     const s = search.toLowerCase();
@@ -59,25 +62,10 @@ export default function Order({ mesa, close, addItemsToTable }) {
   function confirmAdd() {
     if (orderItems.length === 0) return;
 
-    // Calcular solo los NUEVOS items agregados en este modal
-    const existingItemsMap = new Map((mesa.items || []).map(i => [i.id, i]));
-    const itemsToAdd = orderItems
-      .map(item => {
-        const existing = existingItemsMap.get(item.id);
-        if (!existing) {
-          return item; // Item completamente nuevo
-        }
-        // Item existente: pasar solo la diferencia de cantidad
-        const qtyDiff = item.qty - existing.qty;
-        if (qtyDiff <= 0) return null; // No hay cambio
-        return { ...item, qty: qtyDiff };
-      })
-      .filter(Boolean);
-
-    if (itemsToAdd.length > 0) {
-      addItemsToTable(itemsToAdd);
-    }
+    // Pasar todos los items actuales - updateTableItems los reemplazará completamente
+    addItemsToTable(orderItems);
     
+    // Limpiar y cerrar
     setOrderItems([]);
     close();
   }
