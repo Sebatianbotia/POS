@@ -1,5 +1,4 @@
 export const products = [
-  // Entradas
   {
     id: 101,
     name: "Sopa de Lentejas",
@@ -15,7 +14,6 @@ export const products = [
     icon: "🐟"
   },
 
-  // Platos Fuertes
   {
     id: 201,
     name: "Lomo Saltado",
@@ -38,7 +36,6 @@ export const products = [
     icon: "🥩"
   },
 
-  // Bebidas
   {
     id: 301,
     name: "Limonada",
@@ -54,7 +51,6 @@ export const products = [
     icon: "🍷"
   },
 
-  // Postres
   {
     id: 401,
     name: "Torta de Chocolate",
@@ -70,7 +66,6 @@ export const products = [
     icon: "🍨"
   },
 
-  // Especiales
   {
     id: 501,
     name: "Causa Rellena",

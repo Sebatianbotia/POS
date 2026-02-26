@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../styles/ClientAuth.css';
+import '../../styles/pages/ClientAuth.css';
 import { useNavigate } from 'react-router-dom';
 
 

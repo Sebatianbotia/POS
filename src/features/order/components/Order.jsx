@@ -1,8 +1,8 @@
 import { useMemo, useState, useEffect } from "react";
-import "../styles/component_style/Order.css";
+import "../styles/Order.css";
 
-import { categories } from "../services/categoryService";
-import { products } from "../services/productService";
+import { categories } from "../../../services/categoryService";
+import { products } from "../../../services/productService";
 
 export default function Order({ mesa, close, addItemsToTable }) {
   const [search, setSearch] = useState("");
@@ -10,10 +10,8 @@ export default function Order({ mesa, close, addItemsToTable }) {
   const [orderItems, setOrderItems] = useState([]);
 
   useEffect(() => {
-    // Resetear items cuando se abre otra mesa
     setOrderItems([]);
     
-    // Si la mesa tiene items, cargarlos
     if (Array.isArray(mesa?.items) && mesa.items.length > 0) {
       setOrderItems([...mesa.items]);
     }
@@ -62,10 +60,8 @@ export default function Order({ mesa, close, addItemsToTable }) {
   function confirmAdd() {
     if (orderItems.length === 0) return;
 
-    // Pasar todos los items actuales - updateTableItems los reemplazará completamente
     addItemsToTable(orderItems);
     
-    // Limpiar y cerrar
     setOrderItems([]);
     close();
   }

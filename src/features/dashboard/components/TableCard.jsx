@@ -1,4 +1,4 @@
-import '../styles/component_style/TableCard.css';
+import '../styles/TableCard.css';
 
 export default function TableCard({ mesa, setSelected}) {
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "../../styles/component_style/AddTableModal.css";
+import "../styles/AddTableModal.css";
 
 export default function AddTableModal({ close, onCreate }) {
 
@@ -24,7 +24,6 @@ export default function AddTableModal({ close, onCreate }) {
 
       <div className="addtable-box">
 
-        {/* Cerrar */}
         <button className="addtable-close" onClick={close}>✕</button>
 
         <h2 className="addtable-title">Agregar Mesa</h2>

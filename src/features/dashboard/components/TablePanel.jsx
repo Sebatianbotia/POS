@@ -1,29 +1,53 @@
 import { useEffect, useState } from 'react';
-import '../styles/component_style/TablePanel.css';
+import '../styles/TablePanel.css';
 import TableCard from './TableCard';
 import TableData from './TableData';
-import { tables } from '../services/tableService';
-import AddTableModal from './admin/AddTableModal';
-import Order from './Order';
-import { useTableOperations } from '../hooks/useTableOperations'; 
+import { tables } from '../../../services/tableService';
+import AddTableModal from '../../table-management/components/AddTableModal';
+import Order from '../../order/components/Order';
+import { useTableOperations } from '../../../hooks/useTableOperations'; 
 
 
 
-export default function TablePanel() {
+export default function TablePanel({ mesas: propMesas, setMesas: setPropMesas }) {
   
     const [selectedTableId, setSelectedTableId] = useState(null);  
     
     const [showAddModal, setShowAddModal] = useState(false);
     const [showOrder, setShowOrder] = useState(false);
     
-    const [mesas, setMesas] = useState(
+    // Estado local si no vienen props
+    const [localMesas, setLocalMesas] = useState(() =>
       tables.map(table => ({
         ...table,
-        items: null
+        items: null,
+        orderStatus: null,
+        orderCreatedAt: null
       }))
     );
+
+    // Usar props si existen, sino usar estado local
+    const mesas = propMesas !== undefined ? propMesas : localMesas;
+    const setMesas = setPropMesas !== undefined ? setPropMesas : setLocalMesas;
     
-    
+    // Actualizar ocupiedMinutes cada minuto para mesas ocupadas
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setMesas(prevMesas =>
+          prevMesas.map(mesa => {
+            if (mesa.state === "ocupada" && mesa.occupiedMinutes !== null) {
+              return {
+                ...mesa,
+                occupiedMinutes: mesa.occupiedMinutes + 1
+              };
+            }
+            return mesa;
+          })
+        );
+      }, 60000); // Actualizar cada 60 segundos (1 minuto)
+
+      return () => clearInterval(interval);
+    }, [setMesas]);
     
   const selectedTable = mesas.find(m => m.id === selectedTableId) || null;
   const { updateTableItems } = useTableOperations();
@@ -38,7 +62,9 @@ export default function TablePanel() {
       occupiedMinutes: null,
       totalBill: null,
       currentOrderId: null,
-      items: null 
+      items: null,
+      orderStatus: null,
+      orderCreatedAt: null
     };
 
     setMesas(prev => [...prev, mesaConFormato]);
@@ -56,7 +82,21 @@ export default function TablePanel() {
   }
 
   function handleAddItemsToTable(tableId, newItems) {
-    setMesas(prevMesas => updateTableItems(tableId, newItems, prevMesas));
+    setMesas(prevMesas => {
+      const updatedMesas = updateTableItems(tableId, newItems, prevMesas);
+      
+      // Crear o actualizar orden cuando se agregan items
+      return updatedMesas.map(mesa => {
+        if (mesa.id === tableId && mesa.items && mesa.items.length > 0) {
+          return {
+            ...mesa,
+            orderStatus: mesa.orderStatus || 'En progreso',
+            orderCreatedAt: mesa.orderCreatedAt || new Date()
+          };
+        }
+        return mesa;
+      });
+    });
   }
 
   return (

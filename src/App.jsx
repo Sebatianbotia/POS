@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import './App.css'
-import SplashScreen from './pages/SplashScreen'
-import ClientAuth from './pages/ClientAuth'
-import AdminLayout from './pages/AdminLayout'
+import SplashScreen from './pages/splash/SplashScreen'
+import ClientAuth from './pages/auth/ClientAuth'
+import AdminLayout from './layouts/AdminLayout'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 function App() {

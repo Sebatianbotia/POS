@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/SplashScreen.css';
+import '../../styles/pages/SplashScreen.css';
 
 export default function SplashScreen({ onFinish }) {
   const [fraseActual, setFraseActual] = useState(0);

@@ -1,6 +1,6 @@
-import '../styles/component_style/Sidebar.css';
+import '../styles/Sidebar.css';
 
-export default function Sidebar({restaurante, name, onClose}) {
+export default function Sidebar({restaurante, name, onClose, currentSection, onSectionChange}) {
 
   return (
     <aside className="sidebar">
@@ -14,11 +14,17 @@ export default function Sidebar({restaurante, name, onClose}) {
       </div>
 
       <nav className="sidebar-menu">
-        <button className="menu-item active">
+        <button 
+          className={`menu-item ${currentSection === 'mesas' ? 'active' : ''}`}
+          onClick={() => onSectionChange('mesas')}
+        >
           <span className="icon">📋</span> Mesas
         </button>
 
-        <button className="menu-item">
+        <button 
+          className={`menu-item ${currentSection === 'pedidos' ? 'active' : ''}`}
+          onClick={() => onSectionChange('pedidos')}
+        >
           <span className="icon">🛒</span> Pedidos
         </button>
 
@@ -26,7 +32,10 @@ export default function Sidebar({restaurante, name, onClose}) {
           <span className="icon">📖</span> Menú
         </button>
 
-        <button className="menu-item">
+        <button 
+          className={`menu-item ${currentSection === 'caja' ? 'active' : ''}`}
+          onClick={() => onSectionChange('caja')}
+        >
           <span className="icon">💵</span> Caja
         </button>
 

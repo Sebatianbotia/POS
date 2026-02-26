@@ -29,15 +29,12 @@ export function useTableOperations() {
             };
     };
 
-    // Reemplazar items completamente (para Order module)
     const updateTableItems = useCallback((tableId, newItems, mesas) => {
       return mesas.map(mesa => {
         if (mesa.id !== tableId) return mesa;
 
-        // Validar que newItems sea un array
         const items = Array.isArray(newItems) ? newItems : [];
 
-        // Calcular subtotal
         const subtotal = items.reduce(
           (sum, p) => sum + Number(p.price) * Number(p.qty),
           0
@@ -50,6 +47,7 @@ export function useTableOperations() {
         };
       });
     }, []);
+
 
     const addItemsToTable = useCallback((tableId, newItems, mesas) => {
     return mesas.map(mesa => {

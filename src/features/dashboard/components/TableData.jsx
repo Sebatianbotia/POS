@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import '../styles/component_style/TableData.css';
-import { useTableOperations } from '../hooks/useTableOperations';
+import '../styles/TableData.css';
+import { useTableOperations } from '../../../hooks/useTableOperations';
 
 export default function TableData({ mesa, updateMesaState, close, setShowOrder }) {
   const [newGuests, setNewGuests] = useState("");
@@ -46,6 +46,7 @@ export default function TableData({ mesa, updateMesaState, close, setShowOrder }
     close();
   };
 
+  //Esto de debe traer desde el backend, pero por ahora se calcula aquí
   const bill = Number(totalBill ?? 0);
   const tax = bill * 0.10;
   const grandTotal = bill + tax;
