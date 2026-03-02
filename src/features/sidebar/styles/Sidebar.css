@@ -46,6 +46,30 @@
   color: var(--ios-text-muted);
 }
 
+.role-badge {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  width: fit-content;
+}
+
+.role-admin {
+  background: rgba(252, 173, 64, 0.2);
+  color: #fcad40;
+  border: 1px solid rgba(252, 173, 64, 0.4);
+}
+
+.role-mesero {
+  background: rgba(78, 163, 255, 0.2);
+  color: #4ea3ff;
+  border: 1px solid rgba(78, 163, 255, 0.4);
+}
+
 
 .sidebar-menu {
   display: flex;

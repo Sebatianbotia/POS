@@ -1,42 +1,56 @@
 import React, { useState } from 'react';
 import '../../styles/pages/ClientAuth.css';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
 
 export default function ClientAuth() {
   const navigate = useNavigate();
+  const { login, personal } = useAuth();
   
   const [usuario, setUsuario] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   const USUARIOS_DB = [
-    { id: 'admin1', pk: '1234', name: 'Maicol Ortega', rol: 'ADMIN', restaurante: 'la villa'},
-    { id: 'admin2', pk: '1234', name: 'Michael Jordan', rol: 'ADMIN', restaurante: 'Agua Clara'},
-    { id: 'mesero1', pk: '1234', name: 'daniel bonnet', rol: 'MESERO', restaurante: 'la villa'},
-    { id: 'cajero1', pk: '1234', name: 'Adrian botia', rol: 'CAJERO', restaurante: 'la villa'},
-    { id: 'gerente1', pk: '1234', name: 'Jesus Vargas', rol: 'GERENTE', restaurante: 'la villa'}
+    { id: 'admin', pk: '1234', name: 'Admin', role: 'admin', restaurante: 'Mi Restaurante'},
+    { id: 'mesero1', pk: '1234', name: 'daniel bonnet', role: 'mesero', restaurante: 'Mi Restaurante'},
+    { id: 'cajero1', pk: '1234', name: 'Adrian botia', role: 'cajero', restaurante: 'Mi Restaurante'},
   ];
 
   const manejarIngreso = (e) => {
     e.preventDefault();
     setError('');
 
-    const clienteEncontrado = USUARIOS_DB.find(
+    let clienteEncontrado = USUARIOS_DB.find(
       c => c.id === usuario.toLowerCase().trim()
     );
 
-    if (clienteEncontrado && clienteEncontrado.pk === password.trim()) {
-      localStorage.setItem('axon_client_token', 'AUTHORIZED');
-      localStorage.setItem('axon_client_name', clienteEncontrado.name);
-      localStorage.setItem('axon_restaurant_pk', clienteEncontrado.pk);
-      localStorage.setItem('rol', clienteEncontrado.rol);
-      localStorage.setItem('restaurante', clienteEncontrado.restaurante);
-      localStorage.setItem('userId', clienteEncontrado.id);
+    let isValid = clienteEncontrado && clienteEncontrado.pk === password.trim();
 
-      if(clienteEncontrado.rol==="ADMIN"){
-        navigate('/admin');
+    if (!isValid && personal?.length > 0) {
+      clienteEncontrado = personal.find(
+        emp => emp.credentials?.usuario === usuario.toLowerCase().trim()
+      );
+      
+      if (clienteEncontrado && clienteEncontrado.credentials?.password === password.trim()) {
+        isValid = true;
       }
+    }
+
+    if (isValid && clienteEncontrado) {
+      login({
+        id: clienteEncontrado.id || clienteEncontrado.credentials?.usuario,
+        name: clienteEncontrado.name,
+        role: clienteEncontrado.role
+      });
+      
+      localStorage.setItem('axon_client_token', 'AUTHORIZED');
+      localStorage.setItem('axon_restaurant_pk', clienteEncontrado.pk || '1234');
+      localStorage.setItem('restaurante', clienteEncontrado.restaurante || 'Mi Restaurante');
+      localStorage.setItem('userId', clienteEncontrado.id || clienteEncontrado.credentials?.usuario);
+
+      navigate('/admin');
       
     } else {
       setError('Credenciales inválidas.');

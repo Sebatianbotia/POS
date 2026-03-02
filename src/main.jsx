@@ -5,7 +5,6 @@ import App from './App.jsx'
 
 const root = createRoot(document.getElementById('root'));
 
-// En desarrollo, usar StrictMode; en producción, no
 if (import.meta.env.DEV) {
   root.render(
     <StrictMode>

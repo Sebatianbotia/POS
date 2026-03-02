@@ -4,12 +4,15 @@ import TablePanel from '../features/dashboard/components/TablePanel';
 import OrdersManagement from '../features/orders/components/OrdersManagement';
 import CashControl from '../features/cashier/components/CashControl';
 import MenuManagement from '../features/menu/components/MenuManagment';
+import PersonnelManagement from '../features/personnel/components/PersonnelManagement';
+import { useAuth } from '../contexts/AuthContext';
 import '../styles/layouts/AdminLayout.css';
 import { useNavigate } from 'react-router-dom';
 import { tables } from '../services/tableService';
 
 export default function AdminLayout() {
     const navigate = useNavigate();
+    const { user, logout } = useAuth();
     const [currentSection, setCurrentSection] = useState('mesas');
     const [mesas, setMesas] = useState(() => {
       return tables.map(table => ({
@@ -22,10 +25,10 @@ export default function AdminLayout() {
     const [transacciones, setTransacciones] = useState([]);
 
     const restaurante = localStorage.getItem('restaurante') || 'Sin nombre'
-    const nombre = localStorage.getItem('axon_client_name') || 'Usuario'
+    const nombre = user?.name || localStorage.getItem('axon_client_name') || 'Usuario'
 
     function closeSesion(){
-      localStorage.clear();
+      logout();
       navigate('/auth');
     }
 
@@ -89,6 +92,15 @@ export default function AdminLayout() {
         )}
         {currentSection === 'menu' && (
           <MenuManagement/>
+        )}
+        {currentSection === 'personal' && (
+          <PersonnelManagement />
+        )}
+        {currentSection === 'reportes' && (
+          <div className="placeholder-section">
+            <h1>📊 Reportes</h1>
+            <p>Sección de reportes en desarrollo</p>
+          </div>
         )}
       </div>
     </div>
