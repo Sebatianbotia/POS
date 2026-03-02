@@ -1,6 +1,8 @@
 import '../styles/TableCard.css';
+import { use, useEffect } from 'react';
 
-export default function TableCard({ mesa, setSelected}) {
+
+export default function TableCard({ mesa, setSelected, updateMesaState }) {
 
   const {id, number, state, waiter, guests, occupiedMinutes, totalBill, currentOrderId} = mesa
   
@@ -14,7 +16,7 @@ export default function TableCard({ mesa, setSelected}) {
 
   function handleClick(){
     if(isDirty){
-      alert("mesa sucia");
+      updateMesaState(id, {state: "disponible"});
     }else{
       setSelected(mesa.id);
     }

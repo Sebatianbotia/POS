@@ -5,7 +5,6 @@ import '../styles/CashControl.css';
 export default function CashControl({ transacciones = [], onNewTransaction, onCloseSesion }) {
   const [showOpenModal, setShowOpenModal] = useState(false);
 
-  // Calcular totales
   const totalIngresos = transacciones
     .filter(t => t.tipo === 'INGRESO')
     .reduce((sum, t) => sum + t.monto, 0);
@@ -49,31 +48,25 @@ export default function CashControl({ transacciones = [], onNewTransaction, onCl
         </button>
       </div>
 
-      {/* Estadísticas */}
       <div className="cash-stats">
         <div className="stat-card">
           <p className="stat-label">Ventas Totales</p>
           <p className="stat-value">${totalPagos.toLocaleString()}</p>
-          <span className="stat-icon">💵</span>
         </div>
         <div className="stat-card">
           <p className="stat-label">Efectivo en Caja</p>
           <p className="stat-value">${cajaTotal.toLocaleString()}</p>
-          <span className="stat-icon">🏦</span>
         </div>
         <div className="stat-card">
           <p className="stat-label">Tarjetas (TDC/TDD)</p>
           <p className="stat-value">${totalTarjetas.toLocaleString()}</p>
-          <span className="stat-icon">💳</span>
         </div>
         <div className="stat-card">
           <p className="stat-label">Otros / Propinas</p>
           <p className="stat-value">${totalPropinas.toLocaleString()}</p>
-          <span className="stat-icon">🎁</span>
         </div>
       </div>
 
-      {/* Botones de Acción */}
       <div className="cash-actions">
         <button 
           className="action-btn ingreso"
@@ -83,7 +76,6 @@ export default function CashControl({ transacciones = [], onNewTransaction, onCl
         </button>
       </div>
 
-      {/* Tabla de Transacciones */}
       <div className="transactions-section">
         <h2 className="section-title">Transacciones Recientes</h2>
         <div className="transactions-table-wrapper">
@@ -129,7 +121,6 @@ export default function CashControl({ transacciones = [], onNewTransaction, onCl
         </div>
       </div>
 
-      {/* Modal de Abrir Caja */}
       {showOpenModal && (
         <OpenCashModal
           onClose={() => setShowOpenModal(false)}

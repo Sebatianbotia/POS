@@ -59,7 +59,6 @@ export default function OpenCashModal({ onClose, onOpen }) {
             </div>
           </div>
 
-          {/* Monto Input */}
           <div className="amount-input-section">
             <label>Monto</label>
             <div className="amount-input-group">
@@ -74,17 +73,14 @@ export default function OpenCashModal({ onClose, onOpen }) {
             </div>
           </div>
 
-          {/* Error */}
           {error && <p className="error-message">{error}</p>}
 
-          {/* Info */}
           <div className="operation-info">
             <p>Tipo: <strong>{tipoOperacion}</strong></p>
             <p>Monto: <strong>${monto.toLocaleString()}</strong></p>
           </div>
         </div>
 
-        {/* Acciones */}
         <div className="modal-actions">
           <button className="btn-secondary" onClick={onClose}>
             Cancelar

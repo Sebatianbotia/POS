@@ -154,28 +154,25 @@ export default function PaymentModal({ mesa, onClose, onPaymentComplete }) {
         </div>
 
         <div className="payment-content">
-          {/* Información de la Mesa */}
           <div className="payment-info">
             <p><strong>Mesa {mesa.number}</strong></p>
             <p>Pedido #{mesa.currentOrderId}</p>
           </div>
 
-          {/* TOTAL A PAGAR - Prominente */}
           <div className="payment-total-section">
             <label className="total-label">Total a Pagar</label>
             <div className="payment-total-display">
               ${(total + (propina ? propinaCalculada : 0)).toLocaleString('es-CO', { 
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0 
+                minimumFractionDigits: 3,
+                maximumFractionDigits: 3 
               })}
             </div>
             <div className="total-breakdown">
-              <span>Facturado: ${Math.ceil(total).toLocaleString()}</span>
+              <span>Facturado: ${total.toLocaleString()}</span>
               {propina && <span>+ Propina: ${propinaCalculada.toLocaleString()}</span>}
             </div>
           </div>
 
-          {/* Propina Checkbox */}
           <div className="propina-checkbox-section">
             <label className="checkbox-label">
               <input
@@ -188,7 +185,6 @@ export default function PaymentModal({ mesa, onClose, onPaymentComplete }) {
             </label>
           </div>
 
-          {/* Método de Pago */}
           <div className="metodo-pago-section">
             <label>Método de Pago</label>
             <div className="payment-methods">
@@ -196,24 +192,23 @@ export default function PaymentModal({ mesa, onClose, onPaymentComplete }) {
                 className={`payment-method-btn ${metodoPago === 'EFECTIVO' ? 'active' : ''}`}
                 onClick={() => setMetodoPago('EFECTIVO')}
               >
-                💵 EFECTIVO
+                EFECTIVO
               </button>
               <button
                 className={`payment-method-btn ${metodoPago === 'TARJETA' ? 'active' : ''}`}
                 onClick={() => setMetodoPago('TARJETA')}
               >
-                💳 TARJETA
+                TARJETA
               </button>
               <button
                 className={`payment-method-btn ${metodoPago === 'TRANSFERENCIA' ? 'active' : ''}`}
                 onClick={() => setMetodoPago('TRANSFERENCIA')}
               >
-                🏦 TRANSFER
+                TRANSFERENCIA
               </button>
             </div>
           </div>
 
-          {/* Monto Ingresado */}
           <div className="payment-amount-input-section">
             <label>Monto Recibido</label>
             <div className="amount-input-display">
@@ -227,7 +222,6 @@ export default function PaymentModal({ mesa, onClose, onPaymentComplete }) {
             </div>
           </div>
 
-          {/* Calculadora */}
           <div className="calculator-section">
             <div className="calculator-grid">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
@@ -254,24 +248,21 @@ export default function PaymentModal({ mesa, onClose, onPaymentComplete }) {
             </button>
           </div>
 
-          {/* Cambio */}
           {monto > 0 && (
             <div className="cambio-section">
               <span>Cambio:</span>
               <span className="cambio-amount">
                 ${(monto - montoTotal).toLocaleString('es-CO', {
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 0
+                  minimumFractionDigits: 3,
+                  maximumFractionDigits: 3
                 })}
               </span>
             </div>
           )}
 
-          {/* Error */}
           {error && <p className="error-message">{error}</p>}
         </div>
 
-        {/* Botones de Acción */}
         <div className="payment-actions">
           <button className="btn-secondary" onClick={onClose}>
             Cancelar

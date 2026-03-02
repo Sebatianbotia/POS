@@ -82,12 +82,19 @@ export default function OrderDetailModal({ order, mesa, onClose, onCharge }) {
             </div>
           </div>
 
+          {mesa.requiresCleaning && (
+            <div className="cleaning-required-badge">
+              🧹 Esta mesa requiere limpieza
+            </div>
+          )}
+
           <div className="order-detail-actions">
             <button
               className="btn-charge"
               onClick={handleChargeClick}
+              disabled={mesa.requiresCleaning}
             >
-              💰 Cobrar
+              {mesa.requiresCleaning ? 'Pagado' : 'Cobrar'}
             </button>
           </div>
         </div>

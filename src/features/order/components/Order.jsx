@@ -2,9 +2,10 @@ import { useMemo, useState, useEffect } from "react";
 import "../styles/Order.css";
 
 import { categories } from "../../../services/categoryService";
-import { products } from "../../../services/productService";
+import { useProducts } from "../../../contexts/ProductContext";
 
 export default function Order({ mesa, close, addItemsToTable }) {
+  const { products } = useProducts();
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("todos");
   const [orderItems, setOrderItems] = useState([]);
@@ -61,9 +62,9 @@ export default function Order({ mesa, close, addItemsToTable }) {
     if (orderItems.length === 0) return;
 
     addItemsToTable(orderItems);
-    
     setOrderItems([]);
     close();
+
   }
 
   return (
@@ -103,7 +104,6 @@ export default function Order({ mesa, close, addItemsToTable }) {
               onClick={() => addProduct(prod)}
               role="button"
             >
-              <div className="product-icon">{prod.icon}</div>
               <h4>{prod.name}</h4>
               <p>${Number(prod.price).toFixed(2)}</p>
             </div>

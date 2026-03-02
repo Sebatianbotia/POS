@@ -1,35 +1,39 @@
+/* Overlay con mayor desenfoque para un look más premium */
 .payment-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(12px); /* Blur más profundo */
+  -webkit-backdrop-filter: blur(12px);
 }
 
+/* Modal más limpio, bordes sutiles y sombra elegante */
 .payment-modal {
-  background: var(--ios-bg-1);
-  border-radius: 16px;
+  background: var(--ios-bg-1); /* Asumiendo un color oscuro semitransparente */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
   width: 90%;
-  max-width: 550px;
+  max-width: 500px; /* Ligeramente más angosto para verse más estilizado */
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 @keyframes slideUp {
   from {
-    transform: translateY(50px);
+    transform: translateY(30px) scale(0.98);
     opacity: 0;
   }
   to {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
     opacity: 1;
   }
 }
@@ -38,113 +42,103 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .payment-header h2 {
   color: var(--ios-text-main);
-  font-size: 20px;
+  font-size: 18px; /* Ligeramente más pequeño y elegante */
   margin: 0;
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: -0.3px;
 }
 
 .close-btn {
-  background: none;
+  background: transparent;
   border: none;
   color: var(--ios-text-muted);
-  font-size: 28px;
+  font-size: 24px;
   cursor: pointer;
   padding: 0;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  border-radius: 50%;
   transition: all 0.2s ease;
 }
 
 .close-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   color: var(--ios-text-main);
 }
 
 .payment-content {
-  padding: 20px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
+/* Cajas de información más sutiles */
 .payment-info {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 15px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .payment-info p {
-  margin: 5px 0;
-  color: var(--ios-text-main);
-  font-size: 14px;
+  margin: 0;
+  color: var(--ios-text-muted);
+  font-size: 13px;
 }
 
 .payment-info p:first-child {
-  font-weight: 600;
-  font-size: 16px;
+  color: var(--ios-text-main);
+  font-weight: 500;
+  font-size: 15px;
 }
 
-
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 20px;
-  background: linear-gradient(135deg, rgba(252, 173, 64, 0.15), rgba(252, 173, 64, 0.05));
-  border: 2px solid var(--ios-accent);
-  border-radius: 16px;
-  text-align: center;
-}
-
+/* Total a pagar - Tipografía más refinada */
 .total-label {
   color: var(--ios-text-muted);
   font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 600;
+  letter-spacing: 1.5px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  display: block;
 }
 
 .payment-total-display {
   color: var(--ios-accent);
-  font-size: 48px;
-  font-weight: 700;
-  letter-spacing: -1px;
-  line-height: 1;
+  font-size: 42px; /* Ligeramente más pequeño */
+  font-weight: 600;
+  letter-spacing: -1.5px; /* Kernin más apretado para números grandes */
+  line-height: 1.1;
 }
 
 .total-breakdown {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
   font-size: 12px;
   color: var(--ios-text-muted);
-  border-top: 1px solid rgba(252, 173, 64, 0.2);
-  padding-top: 10px;
-}
-
-.total-breakdown span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
+  margin-top: 8px;
 }
 
 /* Propina Checkbox */
 .propina-checkbox-section {
-  padding: 15px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
 }
 
 .checkbox-label {
@@ -154,97 +148,87 @@
   cursor: pointer;
   color: var(--ios-text-main);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .checkbox-label input {
   cursor: pointer;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--ios-accent);
 }
 
 .propina-amount {
   margin-left: auto;
-  color: var(--ios-accent);
-  font-weight: 600;
+  color: var(--ios-text-main);
+  font-weight: 500;
 }
 
 /* Método de Pago */
-.metodo-pago-section {
+.metodo-pago-section,
+.payment-amount-input-section,
+.calculator-section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
-.metodo-pago-section label {
+.metodo-pago-section label,
+.payment-amount-input-section label {
   color: var(--ios-text-muted);
-  font-size: 12px;
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 600;
+  letter-spacing: 1px;
+  font-weight: 500;
 }
 
 .payment-methods {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: 8px;
 }
 
 .payment-method-btn {
-  padding: 12px 10px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.05);
+  padding: 12px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08); 
+  background: rgba(255, 255, 255, 0.02);
   border-radius: 12px;
-  color: var(--ios-text-main);
+  color: var(--ios-text-muted);
   cursor: pointer;
   font-size: 12px;
   font-weight: 500;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   text-align: center;
+  letter-spacing: 0.5px;
 }
 
 .payment-method-btn:hover {
-  border-color: var(--ios-accent);
-  background: rgba(252, 173, 64, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--ios-text-main);
 }
 
 .payment-method-btn.active {
   border-color: var(--ios-accent);
-  background: rgba(252, 173, 64, 0.2);
+  background: transparent;
   color: var(--ios-accent);
-  box-shadow: 0 0 20px rgba(252, 173, 64, 0.2);
-}
-
-/* Monto Ingresado */
-.payment-amount-input-section {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.payment-amount-input-section label {
-  color: var(--ios-text-muted);
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 600;
+  box-shadow: inset 0 0 0 1px var(--ios-accent); 
 }
 
 .amount-input-display {
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.08);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  padding: 0 15px;
-  height: 55px;
+  background: rgba(0, 0, 0, 0.2); 
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 0 16px;
+  height: 56px;
   gap: 8px;
 }
 
 .amount-input-display span {
   color: var(--ios-text-muted);
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .amount-input-readonly {
@@ -252,21 +236,15 @@
   border: none;
   color: var(--ios-text-main);
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 500;
   flex: 1;
   outline: none;
   text-align: right;
+  letter-spacing: -0.5px;
 }
 
 .amount-input-readonly::placeholder {
-  color: var(--ios-text-muted);
-}
-
-/* Calculadora */
-.calculator-section {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  color: rgba(255, 255, 255, 0.2);
 }
 
 .calculator-grid {
@@ -276,151 +254,145 @@
 }
 
 .calc-btn {
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
   color: var(--ios-text-main);
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 400;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .calc-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .calc-btn:active {
-  transform: scale(0.95);
-  background: rgba(252, 173, 64, 0.2);
+  transform: scale(0.97);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .calc-btn.dot {
-  color: var(--ios-accent);
-  font-weight: 700;
-  font-size: 24px;
+  font-weight: 500;
 }
 
 .calc-clear-btn {
   padding: 14px;
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05));
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: 10px;
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.3); 
+  border-radius: 14px;
   color: #ef4444;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
 }
 
 .calc-clear-btn:hover {
-  background: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.1);
 }
 
-/* Cambio */
 .cambio-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px;
-  background: rgba(34, 197, 94, 0.1);
-  border: 1px solid rgba(34, 197, 94, 0.3);
-  border-radius: 12px;
+  padding: 16px;
+  background: rgba(34, 197, 94, 0.05); 
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  border-radius: 16px;
   color: var(--ios-text-main);
-  font-weight: 600;
+  font-weight: 500;
+  font-size: 15px;
 }
 
 .cambio-amount {
-  color: #22c55e;
+  color: #34d399;
+  font-weight: 600;
   font-size: 18px;
 }
 
-/* Error */
 .error-message {
-  background: rgba(255, 59, 48, 0.1);
-  border: 1px solid rgba(255, 59, 48, 0.5);
-  color: #ff3b30;
-  padding: 12px;
-  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.05);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  padding: 12px 16px;
+  border-radius: 12px;
   font-size: 13px;
   margin: 0;
+  text-align: center;
 }
 
-/* Acciones */
 .payment-actions {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  padding: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  grid-template-columns: 1fr 2fr;
+  gap: 12px;
+  padding: 20px 24px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .btn-secondary,
 .btn-primary {
-  padding: 14px 20px;
+  padding: 16px 20px;
   border: none;
-  border-radius: 10px;
-  font-size: 14px;
+  border-radius: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.1);
+  background: transparent;
   color: var(--ios-text-main);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .btn-primary {
   background: var(--ios-accent);
-  color: #000;
+  color: #000; 
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
 }
 
 .btn-primary:hover {
-  background: #e89b35;
-  box-shadow: 0 10px 30px rgba(252, 173, 64, 0.3);
+  filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 
 .btn-primary:active {
   transform: scale(0.98);
 }
 
-/* Responsive */
 @media (max-width: 600px) {
   .payment-modal {
-    width: 95%;
-    max-height: 95vh;
-    border-radius: 20px 20px 0 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: 92vh;
+    border-radius: 32px 32px 0 0;
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     margin: 0;
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .payment-total-display {
     font-size: 36px;
   }
 
-  .calculator-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .payment-methods {
-    grid-template-columns: 1fr;
-  }
-
   .payment-actions {
     grid-template-columns: 1fr;
+    padding-bottom: env(safe-area-inset-bottom, 32px); /* Respeta el notch inferior en iOS */
   }
 }

@@ -4,6 +4,7 @@ import SplashScreen from './pages/splash/SplashScreen'
 import ClientAuth from './pages/auth/ClientAuth'
 import AdminLayout from './layouts/AdminLayout'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ProductProvider } from './contexts/ProductContext';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -26,14 +27,16 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/auth" element={<ClientAuth />} />
-        <Route path="/admin" element={<AdminLayout />} />
-        <Route path="/" element={<Navigate to="/auth" replace />} />
-        <Route path="*" element={<Navigate to="/auth" replace />} />
-      </Routes>
-    </BrowserRouter>
+    <ProductProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/auth" element={<ClientAuth />} />
+          <Route path="/admin" element={<AdminLayout />} />
+          <Route path="/" element={<Navigate to="/auth" replace />} />
+          <Route path="*" element={<Navigate to="/auth" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </ProductProvider>
   )
 }
 

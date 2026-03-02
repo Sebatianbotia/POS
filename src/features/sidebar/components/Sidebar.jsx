@@ -28,7 +28,10 @@ export default function Sidebar({restaurante, name, onClose, currentSection, onS
           <span className="icon">🛒</span> Pedidos
         </button>
 
-        <button className="menu-item">
+        <button 
+         className={`menu-item ${currentSection === 'menu' ? 'active' : ''}`}
+         onClick={() => onSectionChange('menu')}
+          >
           <span className="icon">📖</span> Menú
         </button>
 
@@ -39,13 +42,6 @@ export default function Sidebar({restaurante, name, onClose, currentSection, onS
           <span className="icon">💵</span> Caja
         </button>
 
-        <button className="menu-item">
-          <span className="icon">📊</span> Reportes
-        </button>
-
-        <button className="menu-item">
-          <span className="icon">⚙️</span> Configuración
-        </button>
       </nav>
 
       <div className="sidebar-separator"></div>

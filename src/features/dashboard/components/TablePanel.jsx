@@ -16,7 +16,6 @@ export default function TablePanel({ mesas: propMesas, setMesas: setPropMesas })
     const [showAddModal, setShowAddModal] = useState(false);
     const [showOrder, setShowOrder] = useState(false);
     
-    // Estado local si no vienen props
     const [localMesas, setLocalMesas] = useState(() =>
       tables.map(table => ({
         ...table,
@@ -26,11 +25,9 @@ export default function TablePanel({ mesas: propMesas, setMesas: setPropMesas })
       }))
     );
 
-    // Usar props si existen, sino usar estado local
     const mesas = propMesas !== undefined ? propMesas : localMesas;
     const setMesas = setPropMesas !== undefined ? setPropMesas : setLocalMesas;
     
-    // Actualizar ocupiedMinutes cada minuto para mesas ocupadas
     useEffect(() => {
       const interval = setInterval(() => {
         setMesas(prevMesas =>
@@ -44,7 +41,7 @@ export default function TablePanel({ mesas: propMesas, setMesas: setPropMesas })
             return mesa;
           })
         );
-      }, 60000); // Actualizar cada 60 segundos (1 minuto)
+      }, 60000); 
 
       return () => clearInterval(interval);
     }, [setMesas]);
@@ -85,7 +82,6 @@ export default function TablePanel({ mesas: propMesas, setMesas: setPropMesas })
     setMesas(prevMesas => {
       const updatedMesas = updateTableItems(tableId, newItems, prevMesas);
       
-      // Crear o actualizar orden cuando se agregan items
       return updatedMesas.map(mesa => {
         if (mesa.id === tableId && mesa.items && mesa.items.length > 0) {
           return {
@@ -116,9 +112,7 @@ export default function TablePanel({ mesas: propMesas, setMesas: setPropMesas })
           <button className="add-table-btn" onClick={() => setShowAddModal(true)}>
             <span className="plus">＋</span> Agregar Mesa
           </button> 
-          <button className="join-tables-btn">
-            <span className="plus">🔗</span>  Unir Mesas
-          </button> 
+
         </div>
       </div>
 
@@ -129,6 +123,7 @@ export default function TablePanel({ mesas: propMesas, setMesas: setPropMesas })
           <TableCard
             key={mesa.id}
             mesa={mesa}
+            updateMesaState={updateMesaState}
             setSelected={setSelectedTableId}
           />
         ))}
@@ -157,8 +152,6 @@ export default function TablePanel({ mesas: propMesas, setMesas: setPropMesas })
               mesa={selectedTable}
               close={() => {
                 setShowOrder(false);
-                // Dar tiempo para que React actualice el estado
-                setTimeout(() => setSelectedTableId(null), 100);
               }}
               addItemsToTable={(items) => handleAddItemsToTable(selectedTable.id, items)}
             />

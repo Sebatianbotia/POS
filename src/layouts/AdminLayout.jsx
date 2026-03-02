@@ -3,6 +3,7 @@ import Sidebar from '../features/sidebar/components/Sidebar';
 import TablePanel from '../features/dashboard/components/TablePanel';
 import OrdersManagement from '../features/orders/components/OrdersManagement';
 import CashControl from '../features/cashier/components/CashControl';
+import MenuManagement from '../features/menu/components/MenuManagment';
 import '../styles/layouts/AdminLayout.css';
 import { useNavigate } from 'react-router-dom';
 import { tables } from '../services/tableService';
@@ -29,7 +30,6 @@ export default function AdminLayout() {
     }
 
     function handlePayment(paymentData) {
-      // Crear transacción
       const transaccion = {
         id: transacciones.length + 1,
         mesaId: paymentData.mesaId,
@@ -43,21 +43,14 @@ export default function AdminLayout() {
 
       setTransacciones(prev => [...prev, transaccion]);
 
-      // Marcar mesa como requiere_limpieza
       setMesas(prevMesas =>
         prevMesas.map(mesa =>
           mesa.id === paymentData.mesaId
             ? {
                 ...mesa,
-                state: 'requiere_limpieza',
+                state: 'ocupada',
                 orderStatus: 'Completado',
-                currentOrderId: null,
-                waiter: null,
-                guests: null,
-                occupiedMinutes: null,
-                totalBill: null,
-                items: null,
-                orderCreatedAt: null
+                requiresCleaning: true
               }
             : mesa
         )
@@ -93,6 +86,9 @@ export default function AdminLayout() {
             onNewTransaction={handleNewTransaction}
             onCloseSesion={closeSesion}
           />
+        )}
+        {currentSection === 'menu' && (
+          <MenuManagement/>
         )}
       </div>
     </div>

@@ -6,7 +6,6 @@ export default function OrdersManagement({ mesas, onCharge }) {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [filterStatus, setFilterStatus] = useState('Todos');
 
-  // Convertir mesas ocupadas a órdenes
   const orders = useMemo(() => {
     return mesas
       .filter(mesa => mesa.state === 'ocupada' && mesa.items)
@@ -18,7 +17,6 @@ export default function OrdersManagement({ mesas, onCharge }) {
       }));
   }, [mesas]);
 
-  // Filtrar órdenes
   const filteredOrders = useMemo(() => {
     if (filterStatus === 'Todos') return orders;
     return orders.filter(order => order.status === filterStatus);
@@ -63,22 +61,10 @@ export default function OrdersManagement({ mesas, onCharge }) {
             En Progreso
           </button>
           <button
-            className={`filter-btn ${filterStatus === 'Pendiente' ? 'active' : ''}`}
-            onClick={() => setFilterStatus('Pendiente')}
-          >
-            Pendiente
-          </button>
-          <button
             className={`filter-btn ${filterStatus === 'Completado' ? 'active' : ''}`}
             onClick={() => setFilterStatus('Completado')}
           >
             Completado
-          </button>
-          <button
-            className={`filter-btn ${filterStatus === 'Listo' ? 'active' : ''}`}
-            onClick={() => setFilterStatus('Listo')}
-          >
-            Listo
           </button>
         </div>
       </div>
@@ -109,7 +95,7 @@ export default function OrdersManagement({ mesas, onCharge }) {
                 const total = Number(mesa.totalBill || 0) * 1.085;
 
                 return (
-                  <tr key={order.id} className="order-row">
+                  <tr key={order.id} className={`order-row ${order.status === 'Completado' ? 'order-completed' : ''}`}>
                     <td className="order-id">#{order.id}</td>
                     <td className="order-table">{mesa.number}</td>
                     <td className="order-waiter">{mesa.waiter?.name || '—'}</td>
