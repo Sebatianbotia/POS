@@ -428,6 +428,50 @@
   gap: 12px;
 }
 
+/* Botón eliminar ítem de la orden */
+.btn-remove-item {
+  background: rgba(248, 113, 113, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  color: #f87171;
+  border-radius: 8px;
+  padding: 4px 9px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 10px;
+  flex-shrink: 0;
+}
+.btn-remove-item:hover:not(:disabled) {
+  background: rgba(248, 113, 113, 0.25);
+  transform: scale(1.07);
+}
+.btn-remove-item:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Botón Enviar a Cocina (en modal de detalle) */
+.btn-send-kitchen {
+  padding: 14px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(78, 163, 255, 0.5);
+  background: rgba(78, 163, 255, 0.12);
+  color: #4ea3ff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+.btn-send-kitchen:hover:not(:disabled) {
+  background: rgba(78, 163, 255, 0.22);
+  transform: translateY(-2px);
+}
+.btn-send-kitchen:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .cleaning-required-badge {
   background: rgba(72, 209, 122, 0.15);
   border: 1.5px solid #48d17a;

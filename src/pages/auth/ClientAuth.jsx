@@ -2,58 +2,39 @@ import React, { useState } from 'react';
 import '../../styles/pages/ClientAuth.css';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import authService from '../../services/api/authService';
 
 
 export default function ClientAuth() {
   const navigate = useNavigate();
-  const { login, personal } = useAuth();
+  const { login } = useAuth();
   
   const [usuario, setUsuario] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const USUARIOS_DB = [
-    { id: 'admin', pk: '1234', name: 'Admin', role: 'admin', restaurante: 'Mi Restaurante'},
-    { id: 'mesero1', pk: '1234', name: 'daniel bonnet', role: 'mesero', restaurante: 'Mi Restaurante'},
-    { id: 'cajero1', pk: '1234', name: 'Adrian botia', role: 'cajero', restaurante: 'Mi Restaurante'},
-  ];
-
-  const manejarIngreso = (e) => {
+  const manejarIngreso = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
-    let clienteEncontrado = USUARIOS_DB.find(
-      c => c.id === usuario.toLowerCase().trim()
-    );
-
-    let isValid = clienteEncontrado && clienteEncontrado.pk === password.trim();
-
-    if (!isValid && personal?.length > 0) {
-      clienteEncontrado = personal.find(
-        emp => emp.credentials?.usuario === usuario.toLowerCase().trim()
-      );
+    try {
       
-      if (clienteEncontrado && clienteEncontrado.credentials?.password === password.trim()) {
-        isValid = true;
-      }
-    }
-
-    if (isValid && clienteEncontrado) {
-      login({
-        id: clienteEncontrado.id || clienteEncontrado.credentials?.usuario,
-        name: clienteEncontrado.name,
-        role: clienteEncontrado.role
-      });
+      const userData = await login(usuario, password);
+      
       
       localStorage.setItem('axon_client_token', 'AUTHORIZED');
-      localStorage.setItem('axon_restaurant_pk', clienteEncontrado.pk || '1234');
-      localStorage.setItem('restaurante', clienteEncontrado.restaurante || 'Mi Restaurante');
-      localStorage.setItem('userId', clienteEncontrado.id || clienteEncontrado.credentials?.usuario);
+      localStorage.setItem('userId', userData.id);
+      localStorage.setItem('axon_client_name', userData.nombre);
 
       navigate('/admin');
       
-    } else {
-      setError('Credenciales inválidas.');
+    } catch (err) {
+      console.error('Login error:', err);
+      setError(err.message || 'Credenciales inválidas.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -71,13 +52,13 @@ export default function ClientAuth() {
         <form onSubmit={manejarIngreso} className="auth-form">
           
           <div className="auth-field">
-            <label className="auth-label">Usuario</label>
+            <label className="auth-label">Email o Usuario</label>
             <input 
               type="text"
               value={usuario}
               onChange={(e) => setUsuario(e.target.value)}
               className="auth-input"
-              placeholder="Ej. Axon Food"
+              placeholder="Ej. admin@restaurant.com"
             />
           </div>
 
@@ -96,14 +77,18 @@ export default function ClientAuth() {
             <div className="auth-error">{error}</div>
           )}
 
-          <button className="auth-button" type="submit" onClick={manejarIngreso}>
-            INGRESAR AL SISTEMA
+          <button 
+            className="auth-button" 
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? 'AUTENTICANDO...' : 'INGRESAR AL SISTEMA'}
           </button>
 
         </form>
       </div>
 
-      <p className="auth-footer">Protected by Axon Security © 2025</p>
+      <p className="auth-footer">Protected by Axon Security  2025</p>
     </div>
   );
 }

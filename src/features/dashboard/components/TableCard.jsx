@@ -1,34 +1,28 @@
 import '../styles/TableCard.css';
-import { use, useEffect } from 'react';
-
 
 export default function TableCard({ mesa, setSelected, updateMesaState }) {
 
-  const {id, number, state, waiter, guests, occupiedMinutes, totalBill, currentOrderId} = mesa
-  
-  const isBusy = state === "ocupada";
-  const isFree = state === "disponible";
-  const isDirty = state === "requiere_limpieza";
+  const { id, number, state, waiter, guests, occupiedMinutes, totalBill } = mesa;
 
-  const subtotal = Number(totalBill ?? 0);
-  const tax = subtotal * 0.10;
+  const isBusy = state === 'OCUPADA';
+  const isFree = state === 'LIBRE';
+  const isReserved = state === 'RESERVADA';
+
+  const subtotal = Number(totalBill ?? 0) || 0;
+  const tax = 0;
   const totalWithTax = subtotal + tax;
 
-  function handleClick(){
-    if(isDirty){
-      updateMesaState(id, {state: "disponible"});
-    }else{
-      setSelected(mesa.id);
-    }
-  }
+  const handleClick = () => {
+    setSelected(mesa.id);
+  };
 
   return (
     <div
       className={
-        "table-card " +
-        (isBusy ? "status-busy" : "") +
-        (isFree ? "status-free" : "") +
-        (isDirty ? "status-dirty" : "")
+        'table-card ' +
+        (isBusy ? 'status-busy' : '') +
+        (isFree ? 'status-free' : '') +
+        (isReserved ? 'status-reserved' : '')
       }
       onClick={handleClick}
     >
@@ -37,9 +31,8 @@ export default function TableCard({ mesa, setSelected, updateMesaState }) {
           <h3 className="table-title">{number}</h3>
 
           <ul className="table-info">
-            <li><span className="icon">👤</span> Mesero: {waiter?.name ?? "Sin asignar"}</li>
-            <li><span className="icon">👥</span> {guests ?? 0} Comensales</li>
-            <li><span className="icon">⏱️</span> {occupiedMinutes ?? 0} min</li>
+            <li><span className="icon"></span> Mesero: {waiter?.name ?? 'Sin asignar'}</li>
+            <li><span className="icon"></span> {guests ?? 0} Comensales</li>
           </ul>
 
           <div className="table-total">
@@ -55,10 +48,17 @@ export default function TableCard({ mesa, setSelected, updateMesaState }) {
         </div>
       )}
 
-      {isDirty && (
+      {isReserved && (
         <div className="table-center">
           <h3 className="table-title">{number}</h3>
-          <p className="status-dirty-text">Requiere Limpieza</p>
+          <p className="status-reserved-text">Reservada</p>
+        </div>
+      )}
+
+      {!isBusy && !isFree && !isReserved && (
+        <div className="table-center">
+          <h3 className="table-title">{number}</h3>
+          <p style={{ color: '#aaa', fontSize: '0.85rem' }}>{state || 'Sin estado'}</p>
         </div>
       )}
 

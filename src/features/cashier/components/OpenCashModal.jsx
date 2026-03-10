@@ -3,25 +3,26 @@ import '../styles/OpenCashModal.css';
 
 export default function OpenCashModal({ onClose, onOpen }) {
   const [tipoOperacion, setTipoOperacion] = useState('ADMINISTRATIVA');
-  const [monto, setMonto] = useState(0);
+  const [montoStr, setMontoStr] = useState('');
   const [error, setError] = useState('');
 
   const handleOpen = () => {
     setError('');
 
-    if (monto <= 0) {
+    const montoValue = parseFloat(montoStr) || 0;
+    if (montoValue <= 0) {
       setError('El monto debe ser mayor a 0');
       return;
     }
 
     onOpen({
       tipo: tipoOperacion,
-      monto: monto,
+      monto: montoValue,
       fecha: new Date(),
-      descripcion: `${tipoOperacion} - $${monto.toLocaleString()}`
+      descripcion: `${tipoOperacion} - $${montoValue.toLocaleString()}`
     });
 
-    setMonto(0);
+    setMontoStr('');
     onClose();
   };
 
@@ -34,7 +35,7 @@ export default function OpenCashModal({ onClose, onOpen }) {
         </div>
 
         <div className="modal-content">
-          {/* Tipo de Operación */}
+          
           <div className="operation-type-section">
             <label>Tipo de Operación</label>
             <div className="operation-buttons">
@@ -42,19 +43,13 @@ export default function OpenCashModal({ onClose, onOpen }) {
                 className={`operation-btn ${tipoOperacion === 'ADMINISTRATIVA' ? 'active' : ''}`}
                 onClick={() => setTipoOperacion('ADMINISTRATIVA')}
               >
-                👤 ADMINISTRATIVA
-              </button>
-              <button
-                className={`operation-btn ${tipoOperacion === 'RETIRO' ? 'active' : ''}`}
-                onClick={() => setTipoOperacion('RETIRO')}
-              >
-                💸 RETIRO
+                ADMINISTRATIVA
               </button>
               <button
                 className={`operation-btn ${tipoOperacion === 'INGRESO' ? 'active' : ''}`}
                 onClick={() => setTipoOperacion('INGRESO')}
               >
-                💰 INGRESO
+                INGRESO
               </button>
             </div>
           </div>
@@ -65,8 +60,8 @@ export default function OpenCashModal({ onClose, onOpen }) {
               <span className="currency">$</span>
               <input
                 type="number"
-                value={monto}
-                onChange={(e) => setMonto(Number(e.target.value) || 0)}
+                value={montoStr}
+                onChange={(e) => setMontoStr(e.target.value)}
                 placeholder="0.00"
                 className="amount-input"
               />
@@ -77,7 +72,7 @@ export default function OpenCashModal({ onClose, onOpen }) {
 
           <div className="operation-info">
             <p>Tipo: <strong>{tipoOperacion}</strong></p>
-            <p>Monto: <strong>${monto.toLocaleString()}</strong></p>
+            <p>Monto: <strong>${(parseFloat(montoStr) || 0).toLocaleString()}</strong></p>
           </div>
         </div>
 

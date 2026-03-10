@@ -16,8 +16,8 @@ function App() {
       const timer = setTimeout(() => {
         setLoading(false);
         setInitialized(true);
-      }, 2000); // Reducir a 2 segundos para respuesta más rápida
-      
+      }, 2000); 
+
       return () => clearTimeout(timer);
     }
   }, [initialized]);
@@ -27,8 +27,8 @@ function App() {
   }
 
   return (
-    <ProductProvider>
-      <AuthProvider>
+    <AuthProvider>
+      <ProductProvider>
         <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<ClientAuth />} />
@@ -37,8 +37,8 @@ function App() {
             <Route path="*" element={<Navigate to="/auth" replace />} />
           </Routes>
         </BrowserRouter>
-      </AuthProvider>
-    </ProductProvider>
+      </ProductProvider>
+    </AuthProvider>
   )
 }
 

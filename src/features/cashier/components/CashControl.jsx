@@ -18,7 +18,7 @@ export default function CashControl({ transacciones = [], onNewTransaction, onCl
     .reduce((sum, t) => sum + t.monto, 0);
 
   const totalEfectivo = transacciones
-    .filter(t => t.tipo === 'PAGO' && t.metodoPago === 'EFECTIVO')
+    .filter(t => t.tipo === 'PAGO' && t.metodoPago?.toUpperCase() === 'EFECTIVO')
     .reduce((sum, t) => sum + t.monto, 0);
 
   const totalTarjetas = transacciones
@@ -29,7 +29,7 @@ export default function CashControl({ transacciones = [], onNewTransaction, onCl
     .filter(t => t.tipo === 'PAGO')
     .reduce((sum, t) => sum + (t.propina || 0), 0);
 
-  const cajaTotal = totalPagos + totalIngresos - totalEgresos;
+  const cajaTotal = totalEfectivo + totalIngresos - totalEgresos;
 
   const handleOpenCash = (data) => {
     onNewTransaction({
@@ -68,7 +68,7 @@ export default function CashControl({ transacciones = [], onNewTransaction, onCl
       </div>
 
       <div className="cash-actions">
-        <button 
+        <button
           className="action-btn ingreso"
           onClick={() => setShowOpenModal(true)}
         >
@@ -95,9 +95,9 @@ export default function CashControl({ transacciones = [], onNewTransaction, onCl
                 transacciones.map((t, idx) => (
                   <tr key={idx}>
                     <td>{`#TRX-${String(9999 - idx).padStart(4, '0')}`}</td>
-                    <td>{new Date(t.fecha).toLocaleTimeString('es-CO', { 
-                      hour: '2-digit', 
-                      minute: '2-digit' 
+                    <td>{new Date(t.fecha).toLocaleTimeString('es-CO', {
+                      hour: '2-digit',
+                      minute: '2-digit'
                     })}</td>
                     <td>{t.mesaId ? `Mesa ${t.mesa?.number || t.mesaId}` : '-'}</td>
                     <td>{t.metodoPago || t.tipo}</td>

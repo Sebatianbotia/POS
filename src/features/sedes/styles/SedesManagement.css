@@ -1,0 +1,341 @@
+/* =============================================
+   Sedes Management — Dark Glassmorphism
+   Consistent with the POS design system
+   ============================================= */
+
+/* ── Main Container ── */
+.sedes-management {
+  flex: 1;
+  padding: 32px 40px;
+  color: var(--ios-text-main);
+  background: radial-gradient(ellipse at 20% 30%,
+      rgba(252, 173, 64, 0.1),
+      transparent 60%),
+    radial-gradient(circle at 80% 70%,
+      rgba(252, 173, 64, 0.01),
+      transparent 65%), var(--ios-bg-2);
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+.sedes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.sedes-header h2 {
+  margin: 0;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--ios-text-main);
+  letter-spacing: -0.5px;
+}
+
+/* ── Primary / Secondary Buttons ── */
+.btn-primary {
+  padding: 12px 22px;
+  background: var(--ios-accent);
+  color: #05112D;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-soft);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #ffbe66;
+  transform: translateY(-2px);
+}
+
+.btn-primary:active {
+  transform: scale(0.97);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  padding: 12px 22px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--ios-text-main);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ── Form Overlay/Modal ── */
+.form-container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.form-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+}
+
+.sedes-form {
+  position: relative;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(var(--glass-blur));
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sedes-form h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ios-text-main);
+  padding: 24px 28px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── Form Fields ── */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 0 28px;
+}
+
+.form-field:first-of-type {
+  margin-top: 24px;
+}
+
+.form-field label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--ios-text-muted);
+}
+
+.form-field input {
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  color: var(--ios-text-main);
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.form-field input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.form-field input:focus {
+  border-color: var(--ios-accent);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 3px rgba(252, 173, 64, 0.12);
+}
+
+/* ── Form Actions ── */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  padding: 20px 28px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: 4px;
+}
+
+.form-actions button {
+  flex: 1;
+}
+
+/* ── Error ── */
+.error-message {
+  margin: 0 28px 16px;
+  padding: 12px 16px;
+  background: rgba(255, 59, 48, 0.12);
+  border-left: 4px solid #ff3b30;
+  border-radius: 8px;
+  color: #ff5c5c;
+  font-size: 14px;
+}
+
+/* ── Sedes List ── */
+.sedes-list {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+  padding: 24px 28px;
+}
+
+.sedes-list h3 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ios-text-main);
+}
+
+.empty-message {
+  text-align: center;
+  color: var(--ios-text-muted);
+  padding: 40px;
+  font-size: 15px;
+  font-style: italic;
+}
+
+/* ── Sedes Grid ── */
+.sedes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+/* ── Sede Card ── */
+.sede-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.sede-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(252, 173, 64, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  background: rgba(252, 173, 64, 0.06);
+}
+
+.sede-card.active {
+  background: linear-gradient(135deg,
+      rgba(252, 173, 64, 0.18),
+      rgba(252, 173, 64, 0.06));
+  border-color: var(--ios-accent);
+  box-shadow: 0 0 0 1px var(--ios-accent), 0 8px 24px rgba(252, 173, 64, 0.15);
+}
+
+/* ── Sede Icon ── */
+.sede-icon {
+  font-size: 2.2rem;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+}
+
+/* ── Sede Info ── */
+.sede-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sede-info h4 {
+  margin: 0 0 6px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ios-text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sede-direccion,
+.sede-telefono {
+  margin: 3px 0;
+  font-size: 13px;
+  color: var(--ios-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sede-status {
+  margin: 10px 0 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ios-text-muted);
+}
+
+.sede-card.active .sede-status {
+  color: var(--ios-accent);
+}
+
+/* ── Active Badge ── */
+.sede-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: var(--ios-accent);
+  color: #05112D;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .sedes-management {
+    padding: 20px;
+  }
+
+  .sedes-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .sedes-header h2 {
+    font-size: 28px;
+  }
+
+  .sedes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sedes-form {
+    width: 95%;
+  }
+}

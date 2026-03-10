@@ -1,0 +1,109 @@
+# Documentación Funcional: Terminales POS (`pos_terminals`)
+
+**Para: Equipo de Frontend**
+
+El presente documento expone el concepto, propósito y uso dentro del flujo de la aplicación de los registros etiquetados como **Terminales POS** que verán dentro del diseño o en los endpoints de la API (ejemplo: `/terminales`).
+
+## 1. ¿Qué es una Terminal POS en el Sistema?
+
+En estricto sentido, una **Terminal POS (Point of Sale)** en nuestro backend es una representación **física o lógica de un dispositivo** desde el cual se están emitiendo cobros o se abren comandas.
+
+**Ejemplos en la vida real:**
+- La iPad principal ubicada en la caja registradora.
+- El teléfono celular del mesero "Juan" con la app instalada.
+- Una tableta táctil anclada en una estación de preparación.
+- Una terminal bancaria conectada que necesita un identificador para conciliaciones.
+
+## 2. ¿Por qué el Backend las necesita?
+
+Cada orden generada en el sistema (`POST /ordenes`) guarda un identificador relacional llamado `pos_terminal_id`. Tener este registro es crítico por 3 factores:
+
+1. **Auditoría e Identificación de Fugas:** Permite al propietario saber **exactamente desde qué dispositivo físico** se emitió una orden o se ingresó dinero, evitando que, en un posible fraude, todos los movimientos se pierdan entre usuarios irreconocibles.
+2. **Control de Flujo de Efectivo (Caja):** Las terminales se asocian con cortes de caja. Si tienes 3 cajeros con 3 terminales físicas diferentes en distintas barras de un mismo local (ej. Barra Principal, Barra VIP, Terraza), necesitas cerrar y medir la facturación de cada "Terminal" individualmente.
+3. **Impresión de Tickets (Múltiples Impresoras):** En sistemas robustos, la Terminal "A" puede estar configurada para mandar el ticket de bebidas a cierta barra, y la Terminal "B" a la cocina principal automáticamente según su ID.
+
+A nivel DB, el esquema es el siguiente:
+```sql
+CREATE TABLE pos_terminals (
+  id SERIAL PRIMARY KEY,
+  venue_id INT NOT NULL REFERENCES venues(id) ON DELETE CASCADE,
+  name VARCHAR(100) NOT NULL, -- Ej: "Caja Principal Entrada" o "Tablet Meseros 1"
+  status_id INT NOT NULL REFERENCES terminal_statuses(id),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+## 3. ¿Cómo consume esto el Frontend?
+
+El Frontend debe tener pantallas y lógicas para gestionar estas terminales.
+
+### Gestión por parte del Propietario/Owner (CRUD de Terminales):
+El propietario de una Sede (`venue`) necesitará una pantalla de configuración (Settings) en el panel administrativo donde pueda registrar los dispositivos físicos con los que operará la Sede.
+- **Crear Terminal:** `POST /terminales` -> `{"name": "Caja Norte"}`
+- **Listar Terminales de la Sede:** `GET /terminales` -> Esto listará todo lo disponible para su local.
+- **Bloquear/Desactivar:** `PATCH /terminales/:id` -> Podrá desactivarlas.
+
+### Asignación de Terminal al Dispositivo (Mecánica de Login en Empleados):
+**IMPORTANTE:** Cuando un Cajero o Mesero inicie sesión (o como un paso inicial de configuración al instalar la app web/móvil en una tablet), **el Frontend debe permitir "Asignar/Vincular" el dispositivo a una Terminal ID específica.**
+1. El empleado ingresa.
+2. Si su dispositivo no recuerda (vía `localStorage` / persitence) qué terminal es, un modal o dropdown le solicita "Selecciona la Terminal de este dispositivo" consumiendo `GET /terminales`.
+3. El frontend almacena dicho `pos_terminal_id` globalmente en el estado o storage.
+4. Así, cada vez que el Frontend hace un llamado a `POST /ordenes` (crear orden) o `POST /pagos` (hacer un cobro), despachará este `pos_terminal_id` ocultamente en el body porque las APIs financieras lo exigen como propiedad obligatoria.
+
+Aqui la documentación de los endpoints.
+
+### Terminales POS (POS Terminals)
+
+| Method | Route | Roles | Description |
+|---|---|---|---|
+| POST | `/terminales` | Propietario | Create terminal |
+| GET | `/terminales` | Propietario | List venue terminals |
+| GET | `/terminales/:id` | Propietario | Get terminal by ID |
+| PATCH | `/terminales/:id` | Propietario | Update terminal |
+
+#### POST `/terminales`
+```json
+// Request
+{
+  "nombre": "Caja 1"              // required
+}
+// Response 201
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "nombre": "Caja 1",
+    "venue_id": 1,
+    "activo": true
+  }
+}
+```
+
+#### GET `/terminales`
+```json
+// Response 200
+{
+  "success": true,
+  "data": [
+    { "id": 1, "nombre": "Caja 1", "venue_id": 1, "activo": true }
+  ]
+}
+```
+
+#### GET `/terminales/:id`
+```json
+// Response 200 (same terminal object)
+```
+
+#### PATCH `/terminales/:id`
+```json
+// Request
+{
+  "nombre": "Caja Principal",     // optional
+  "activo": false                  // optional
+}
+// Response 200 (updated terminal object)
+```
+
+---

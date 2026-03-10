@@ -1,0 +1,437 @@
+/* =============================================
+   Reports Management — Dark Glassmorphism
+   Consistent with the POS design system
+   ============================================= */
+
+/* ── Main Container ── */
+.reports-container {
+  flex: 1;
+  padding: 32px 40px;
+  color: var(--ios-text-main);
+  background: radial-gradient(ellipse at 20% 30%,
+      rgba(252, 173, 64, 0.1),
+      transparent 60%),
+    radial-gradient(circle at 80% 70%,
+      rgba(252, 173, 64, 0.01),
+      transparent 65%), var(--ios-bg-2);
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+.reports-header {
+  margin-bottom: 32px;
+}
+
+.reports-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--ios-text-main);
+  margin: 0 0 6px 0;
+  letter-spacing: -0.5px;
+}
+
+.reports-subtitle {
+  font-size: 15px;
+  color: var(--ios-text-muted);
+  margin: 0;
+}
+
+/* ── Tabs ── */
+.reports-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  padding: 11px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ios-text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  border-radius: 8px 8px 0 0;
+}
+
+.tab-btn:hover {
+  color: var(--ios-text-main);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-btn.active {
+  color: var(--ios-accent);
+  border-bottom-color: var(--ios-accent);
+  background: rgba(252, 173, 64, 0.06);
+}
+
+/* ── Content Panel ── */
+.reports-content {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+  padding: 28px;
+  animation: fadeIn 0.3s ease;
+}
+
+.report-section {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.report-section h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ios-text-main);
+  margin: 0 0 24px 0;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ── Filters ── */
+.report-filters {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 18px 20px;
+  border-radius: 12px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-group label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--ios-text-muted);
+}
+
+.filter-group input,
+.filter-group select {
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  color: var(--ios-text-main);
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  outline: none;
+  min-width: 150px;
+}
+
+.filter-group select option {
+  background: #1a2035;
+  color: var(--ios-text-main);
+}
+
+.filter-group input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+  border-color: var(--ios-accent);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 3px rgba(252, 173, 64, 0.1);
+}
+
+.btn-apply-filter {
+  padding: 10px 22px;
+  background: var(--ios-accent);
+  color: #05112D;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.btn-apply-filter:hover {
+  background: #ffbe66;
+  transform: translateY(-2px);
+}
+
+.btn-apply-filter:active {
+  transform: scale(0.97);
+}
+
+/* ── Actions Row ── */
+.report-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.btn-refresh {
+  padding: 10px 20px;
+  background: rgba(72, 209, 122, 0.12);
+  border: 1px solid rgba(72, 209, 122, 0.3);
+  color: #48d17a;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.btn-refresh:hover:not(:disabled) {
+  background: rgba(72, 209, 122, 0.22);
+  transform: translateY(-1px);
+}
+
+.btn-refresh:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Error / Loading ── */
+.error-message {
+  background: rgba(255, 59, 48, 0.12);
+  border-left: 4px solid #ff3b30;
+  color: #ff5c5c;
+  padding: 14px 18px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.loading {
+  text-align: center;
+  padding: 48px;
+  color: var(--ios-text-muted);
+  font-size: 15px;
+}
+
+/* ── Summary Cards ── */
+.report-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.summary-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 22px;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.summary-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(252, 173, 64, 0.08), transparent);
+  pointer-events: none;
+}
+
+.summary-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(252, 173, 64, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.summary-card h3 {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ios-text-muted);
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.summary-card p {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ios-text-main);
+}
+
+.summary-card .amount {
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--ios-accent);
+}
+
+.summary-card .alert-number {
+  color: #ff5c5c;
+  font-size: 36px;
+}
+
+/* ── Report Details ── */
+.report-details {
+  margin-bottom: 28px;
+}
+
+.report-details h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ios-text-main);
+  margin: 0 0 14px 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── Report Table ── */
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.report-table thead {
+  background: rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.report-table th {
+  padding: 14px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--ios-text-muted);
+}
+
+.report-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--ios-text-main);
+  transition: background 0.2s ease;
+}
+
+.report-table tbody tr:hover {
+  background: rgba(252, 173, 64, 0.04);
+}
+
+.report-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Low stock row highlight */
+.low-stock-row td {
+  background: rgba(255, 92, 92, 0.05);
+}
+
+.low-stock-row:hover td {
+  background: rgba(255, 92, 92, 0.1);
+}
+
+/* ── No Data ── */
+.no-data {
+  text-align: center;
+  padding: 48px;
+  color: var(--ios-text-muted);
+  font-size: 15px;
+}
+
+/* ── Badges ── */
+.badge {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-danger {
+  background: rgba(255, 92, 92, 0.15);
+  color: #ff5c5c;
+  border: 1px solid rgba(255, 92, 92, 0.3);
+}
+
+/* ── Download Button ── */
+.btn-download {
+  display: block;
+  margin: 28px auto 0;
+  padding: 12px 30px;
+  background: linear-gradient(135deg, rgba(252, 173, 64, 0.2), rgba(252, 173, 64, 0.05));
+  border: 2px solid rgba(252, 173, 64, 0.35);
+  color: var(--ios-accent);
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+}
+
+.btn-download:hover {
+  background: rgba(252, 173, 64, 0.18);
+  border-color: var(--ios-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(252, 173, 64, 0.2);
+}
+
+.btn-download:active {
+  transform: scale(0.97);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .reports-container {
+    padding: 20px;
+  }
+
+  .reports-title {
+    font-size: 26px;
+  }
+
+  .reports-content {
+    padding: 18px;
+  }
+
+  .report-filters {
+    flex-direction: column;
+  }
+
+  .filter-group,
+  .filter-group input,
+  .filter-group select,
+  .btn-apply-filter {
+    width: 100%;
+  }
+
+  .report-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .report-table th,
+  .report-table td {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+}

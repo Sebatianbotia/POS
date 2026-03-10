@@ -1,43 +1,85 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
+import { useAuth } from '../../../contexts/AuthContext';
+import { useProducts } from '../../../contexts/ProductContext';
+import { paymentsService, ordersService, ingredientsService } from '../../../services/api/index.js';
 import '../styles/PaymentModal.css';
 
 export default function PaymentModal({ mesa, onClose, onPaymentComplete }) {
-  const [monto, setMonto] = useState(0);
+  const { currentTerminal } = useAuth();
+  const { products } = useProducts();
+  const [montoStr, setMontoStr] = useState('');
   const [propina, setPropina] = useState(false);
-  const [metodoPago, setMetodoPago] = useState('EFECTIVO');
+  const [metodoPago, setMetodoPago] = useState('efectivo');
   const [error, setError] = useState('');
+  const [processing, setProcessing] = useState(false);
 
-  const total = mesa.totalBill ? Number(mesa.totalBill) * 1.085 : 0;
+  const subtotal = Number(mesa.totalBill) || 0;
+  const total = subtotal;
   const propinaCalculada = propina ? Math.round(total * 0.1) : 0;
   const montoTotal = total + propinaCalculada;
+  const monto = montoStr === '' ? 0 : parseFloat(montoStr) || 0;
 
   const handlePropina = (e) => {
     setPropina(e.target.checked);
   };
 
   const handleNumeroClick = (num) => {
-    setMonto(prev => {
-      const str = prev === 0 ? String(num) : String(prev) + String(num);
-      return Number(str);
+    setMontoStr(prev => {
+      if (prev === '') return String(num);
+      if (prev === '0' && !prev.includes('.')) return String(num);
+      return prev + String(num);
     });
   };
 
   const handlePunto = () => {
-    setMonto(prev => {
-      if (String(prev).includes('.')) return prev;
-      return parseFloat(String(prev) + '.');
+    setMontoStr(prev => {
+      if (prev === '') return '0.';
+      if (prev.includes('.')) return prev;
+      return prev + '.';
     });
   };
 
   const handleCobrar = async () => {
     setError('');
 
-    if (monto < total) {
-      setError(`El monto debe ser mayor o igual a $${Math.ceil(total).toLocaleString()}`);
+    if (monto < montoTotal) {
+      setError(`El monto debe ser mayor o igual a $${Math.ceil(montoTotal).toLocaleString()}`);
+      return;
+    }
+    if (!currentTerminal || !currentTerminal.id) {
+      setError('Terminal no asignada. Por favor, verifica tu sesión.');
       return;
     }
 
-    await generarFactura();
+    setProcessing(true);
+    try {
+      if (mesa.currentOrderId) {
+        await ordersService.checkout(mesa.currentOrderId);
+      }
+      if (mesa.currentOrderId) {
+        await paymentsService.processPayment(
+          mesa.currentOrderId,
+          metodoPago,
+          Math.round(montoTotal),
+          propinaCalculada,
+          {},
+          null,
+          currentTerminal.id
+        );
+      }
+
+      ingredientsService.deductInventory(mesa.items || [], products).catch(err => {
+        console.error('Inventory deduction delayed error:', err);
+      });
+
+    } catch (err) {
+      console.error('Error processing payment:', err);
+      setError(`Error al procesar el pago: ${err.message}`);
+      setProcessing(false);
+      return;
+    }
+
+    generarFactura();
 
     onPaymentComplete({
       mesaId: mesa.id,
@@ -46,23 +88,26 @@ export default function PaymentModal({ mesa, onClose, onPaymentComplete }) {
       propina: propinaCalculada,
       metodoPago: metodoPago,
       fecha: new Date(),
+      descripcion: `Mesa ${mesa.number} - ${mesa.items?.length || 0} items`,
+      terminalId: currentTerminal.id,
       descripcion: `Mesa ${mesa.number} - ${mesa.items?.length || 0} items`
     });
 
+    setProcessing(false);
     onClose();
   };
 
   const generarFactura = async () => {
     try {
       const html2pdf = await import('html2pdf.js');
-      
+
       const element = document.createElement('div');
       element.innerHTML = `
         <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 400px;">
           <h2 style="text-align: center; margin-bottom: 20px;">FACTURA</h2>
           <p><strong>Fecha:</strong> ${new Date().toLocaleString('es-CO')}</p>
           <p><strong>Mesa:</strong> ${mesa.number}</p>
-          <p><strong>Mesero:</strong> ${mesa.waiter || 'N/A'}</p>
+          <p><strong>Mesero:</strong> ${mesa.waiter?.name || 'N/A'}</p>
           <hr style="border: 1px solid #ccc; margin: 15px 0;">
           
           <h3 style="font-size: 14px; margin-bottom: 10px;">Detalles de la Orden</h3>
@@ -79,7 +124,7 @@ export default function PaymentModal({ mesa, onClose, onPaymentComplete }) {
                 <tr style="border-bottom: 1px solid #eee;">
                   <td style="padding: 5px;">${item.name || 'Producto'}</td>
                   <td style="text-align: right; padding: 5px;">${item.quantity || 1}</td>
-                  <td style="text-align: right; padding: 5px;">$${((item.price || 0) * (item.quantity || 1)).toLocaleString()}</td>
+                  <td style="text-align: right; padding: 5px;">$${((item.precio || item.price || 0) * (item.quantity || item.qty || 1)).toLocaleString()}</td>
                 </tr>
               `).join('') || '<tr><td colspan="3" style="padding: 5px;">Sin items</td></tr>'}
             </tbody>
@@ -90,11 +135,7 @@ export default function PaymentModal({ mesa, onClose, onPaymentComplete }) {
           <div style="font-size: 14px;">
             <p style="display: flex; justify-content: space-between; margin: 8px 0;">
               <span>Subtotal:</span>
-              <span>$${(total / 1.085).toLocaleString()}</span>
-            </p>
-            <p style="display: flex; justify-content: space-between; margin: 8px 0;">
-              <span>Impuesto (8.5%):</span>
-              <span>$${(total - (total / 1.085)).toLocaleString()}</span>
+              <span>$${total.toLocaleString()}</span>
             </p>
             ${propinaCalculada > 0 ? `
               <p style="display: flex; justify-content: space-between; margin: 8px 0; color: #fcad40;">
@@ -162,9 +203,9 @@ export default function PaymentModal({ mesa, onClose, onPaymentComplete }) {
           <div className="payment-total-section">
             <label className="total-label">Total a Pagar</label>
             <div className="payment-total-display">
-              ${(total + (propina ? propinaCalculada : 0)).toLocaleString('es-CO', { 
-                minimumFractionDigits: 3,
-                maximumFractionDigits: 3 
+              ${(total + (propina ? propinaCalculada : 0)).toLocaleString('es-CO', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
               })}
             </div>
             <div className="total-breakdown">
@@ -189,22 +230,22 @@ export default function PaymentModal({ mesa, onClose, onPaymentComplete }) {
             <label>Método de Pago</label>
             <div className="payment-methods">
               <button
-                className={`payment-method-btn ${metodoPago === 'EFECTIVO' ? 'active' : ''}`}
-                onClick={() => setMetodoPago('EFECTIVO')}
+                className={`payment-method-btn ${metodoPago === 'efectivo' ? 'active' : ''}`}
+                onClick={() => setMetodoPago('efectivo')}
               >
                 EFECTIVO
               </button>
               <button
-                className={`payment-method-btn ${metodoPago === 'TARJETA' ? 'active' : ''}`}
-                onClick={() => setMetodoPago('TARJETA')}
+                className={`payment-method-btn ${metodoPago === 'tarjeta' ? 'active' : ''}`}
+                onClick={() => setMetodoPago('tarjeta')}
               >
                 TARJETA
               </button>
               <button
-                className={`payment-method-btn ${metodoPago === 'TRANSFERENCIA' ? 'active' : ''}`}
-                onClick={() => setMetodoPago('TRANSFERENCIA')}
+                className={`payment-method-btn ${metodoPago === 'multiple' ? 'active' : ''}`}
+                onClick={() => setMetodoPago('multiple')}
               >
-                TRANSFERENCIA
+                MÚLTIPLE
               </button>
             </div>
           </div>
@@ -215,7 +256,7 @@ export default function PaymentModal({ mesa, onClose, onPaymentComplete }) {
               <span>$</span>
               <input
                 type="text"
-                value={monto === 0 ? '' : monto.toLocaleString('es-CO')}
+                value={montoStr}
                 readOnly
                 className="amount-input-readonly"
               />
@@ -240,9 +281,9 @@ export default function PaymentModal({ mesa, onClose, onPaymentComplete }) {
                 .
               </button>
             </div>
-            <button 
+            <button
               className="calc-clear-btn"
-              onClick={() => setMonto(0)}
+              onClick={() => setMontoStr('')}
             >
               Limpiar
             </button>
@@ -253,8 +294,8 @@ export default function PaymentModal({ mesa, onClose, onPaymentComplete }) {
               <span>Cambio:</span>
               <span className="cambio-amount">
                 ${(monto - montoTotal).toLocaleString('es-CO', {
-                  minimumFractionDigits: 3,
-                  maximumFractionDigits: 3
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0
                 })}
               </span>
             </div>
@@ -267,8 +308,8 @@ export default function PaymentModal({ mesa, onClose, onPaymentComplete }) {
           <button className="btn-secondary" onClick={onClose}>
             Cancelar
           </button>
-          <button className="btn-primary" onClick={handleCobrar}>
-            Cobrar & Imprimir Factura
+          <button className="btn-primary" onClick={handleCobrar} disabled={processing}>
+            {processing ? 'Procesando...' : 'Cobrar & Imprimir Factura'}
           </button>
         </div>
       </div>

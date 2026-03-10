@@ -167,12 +167,18 @@
   box-shadow: var(--shadow-soft);
 }
 
-.auth-button:hover {
+.auth-button:hover:not(:disabled) {
   background: #ffbe66;
 }
 
-.auth-button:active {
+.auth-button:active:not(:disabled) {
   transform: scale(0.96);
+}
+
+.auth-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background: #ffa500;
 }
 
 

@@ -1,0 +1,165 @@
+.terminal-selector-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(12px);
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+}
+
+.terminal-selector-modal {
+  position: relative;
+  width: 90%;
+  max-width: 500px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 4px 22px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(var(--glass-blur));
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.terminal-selector-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ios-text-main);
+  margin: 0 0 8px;
+  text-align: center;
+}
+
+.terminal-selector-subtitle {
+  font-size: 14px;
+  color: var(--ios-text-muted);
+  text-align: center;
+  margin: 0 0 24px;
+}
+
+.error-message {
+  background: rgba(255, 59, 48, 0.15);
+  border: 1px solid rgba(255, 59, 48, 0.3);
+  color: #ff3b30;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+.terminals-list {
+  margin-bottom: 24px;
+  max-height: 300px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.terminal-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.terminal-option:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.terminal-option.selected {
+  border-color: var(--ios-accent);
+  background: rgba(252, 173, 64, 0.1);
+}
+
+.terminal-radio {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--ios-accent);
+}
+
+.terminal-info {
+  flex: 1;
+}
+
+.terminal-name {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ios-text-main);
+  margin-bottom: 4px;
+}
+
+.terminal-id {
+  font-size: 12px;
+  color: var(--ios-text-muted);
+  margin: 0;
+}
+
+.no-terminals {
+  text-align: center;
+  color: var(--ios-text-muted);
+  padding: 24px;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-confirm-terminal {
+  width: 100%;
+  padding: 14px;
+  background: var(--ios-accent);
+  color: #05112D;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 12px;
+}
+
+.btn-confirm-terminal:hover:not(:disabled) {
+  background: #ffbe66;
+  transform: translateY(-2px);
+}
+
+.btn-confirm-terminal:disabled {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--ios-text-muted);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.loading-text {
+  text-align: center;
+  color: var(--ios-text-muted);
+  font-size: 14px;
+}
+
+.help-text {
+  font-size: 12px;
+  color: var(--ios-text-muted);
+  text-align: center;
+  margin: 0;
+}

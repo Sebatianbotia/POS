@@ -1,0 +1,202 @@
+/* WaiterPickerModal.css */
+
+.waiter-picker-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(3px);
+}
+
+.waiter-picker-modal {
+    position: relative;
+    background: #1e1e2e;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 2rem;
+    width: 420px;
+    max-width: 95vw;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+    color: #e0e0e0;
+}
+
+.waiter-picker-close {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    background: rgba(255, 255, 255, 0.08);
+    border: none;
+    color: #ccc;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.waiter-picker-close:hover {
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.waiter-picker-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem;
+    color: #fff;
+}
+
+.waiter-picker-subtitle {
+    font-size: 0.85rem;
+    color: #888;
+    margin: 0 0 1.25rem;
+}
+
+.waiter-picker-loading,
+.waiter-picker-error,
+.waiter-picker-empty {
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 1rem;
+    color: #aaa;
+}
+
+.waiter-picker-error {
+    color: #f87171;
+}
+
+.waiter-picker-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.waiter-picker-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.waiter-picker-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.waiter-picker-item.selected {
+    background: rgba(99, 102, 241, 0.18);
+    border-color: rgba(99, 102, 241, 0.5);
+}
+
+.waiter-avatar {
+    font-size: 1.4rem;
+}
+
+.waiter-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.waiter-info strong {
+    font-size: 0.95rem;
+    color: #f0f0f0;
+}
+
+.waiter-info small {
+    font-size: 0.78rem;
+    color: #888;
+}
+
+.waiter-check {
+    color: #6366f1;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.waiter-picker-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+
+.waiter-picker-actions .btn-secondary {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #ccc;
+    padding: 0.55rem 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.waiter-picker-actions .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.waiter-picker-actions .btn-primary {
+    background: linear-gradient(135deg, #6366f1, #818cf8);
+    border: none;
+    color: #fff;
+    padding: 0.55rem 1.25rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: opacity 0.2s;
+}
+
+.waiter-picker-actions .btn-primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.waiter-picker-actions .btn-primary:hover:not(:disabled) {
+    opacity: 0.88;
+}
+
+/* Manual entry fallback (for CAJERO role) */
+.waiter-manual-entry {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+}
+
+.waiter-manual-note {
+    font-size: 0.82rem;
+    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    border-radius: 8px;
+    padding: 0.65rem 0.85rem;
+    margin: 0;
+}
+
+.waiter-manual-input {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    color: #f0f0f0;
+    font-size: 0.9rem;
+    padding: 0.55rem 0.85rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.waiter-manual-input:focus {
+    border-color: rgba(99, 102, 241, 0.5);
+}

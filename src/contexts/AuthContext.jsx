@@ -1,21 +1,11 @@
-import { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useState, useContext, useEffect, useCallback } from 'react';
+import authService from '../services/api/authService.js';
+import usersService from '../services/api/usersService.js';
+import sedesService from '../services/api/sedesService.js';
+import propietarioService from '../services/api/propietarioService.js';
+import { terminalesService } from '../services/api/index.js';
 
 const AuthContext = createContext();
-
-// Función para generar credenciales automáticas
-function generarCredenciales(nombre) {
-  // Usuario: basado en el nombre (primeros 3 caracteres + números)
-  const userBase = nombre.toLowerCase().replace(/\s+/g, '.').substring(0, 8);
-  const usuario = userBase + Math.floor(Math.random() * 100);
-  
-  const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let password = '';
-  for (let i = 0; i < 6; i++) {
-    password += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
-  }
-  
-  return { usuario, password };
-}
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
@@ -23,74 +13,280 @@ export function AuthProvider({ children }) {
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
-  const [personal, setPersonal] = useState(() => {
-    const savedPersonal = localStorage.getItem('axon_personal');
-    return savedPersonal ? JSON.parse(savedPersonal) : [];
+  const [personal, setPersonal] = useState([]);
+  const [sedes, setSedes] = useState([]);
+  const [currentSede, setCurrentSede] = useState(() => {
+    const savedSede = localStorage.getItem('axon_sede');
+    return savedSede ? JSON.parse(savedSede) : null;
   });
+  const [terminals, setTerminals] = useState([]);
+  const [currentTerminal, setCurrentTerminal] = useState(() => {
+    const savedTerminal = localStorage.getItem('axon_terminal');
+    return savedTerminal ? JSON.parse(savedTerminal) : null;
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const login = (userData) => {
-    const userWithRole = {
-      ...userData,
-      role: userData.role || 'mesero' 
-    };
-    setUser(userWithRole);
-    localStorage.setItem('axon_user', JSON.stringify(userWithRole));
-    localStorage.setItem('axon_client_name', userData.name);
-  };
+  
+  const loadPersonal = useCallback(async () => {
+    try {
+      const employees = await usersService.getAllUsers();
+      setPersonal(employees);
+    } catch (err) {
+      console.error('Failed to load employees:', err);
+      setError(err.message);
+    }
+  }, []);
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('axon_user');
-    localStorage.removeItem('axon_client_name');
-  };
+  const loadTerminals = useCallback(async () => {
+    try {
+      const terminalsData = await terminalesService.getAllTerminals();
+      setTerminals(terminalsData || []);
 
-  const addEmployee = (employeeData) => {
-    // Generar credenciales automáticas
-    const credentials = generarCredenciales(employeeData.name);
-    
-    const newEmployee = {
-      id: Date.now(),
-      ...employeeData,
-      role: 'mesero',
-      credentials: {
-        usuario: credentials.usuario,
-        password: credentials.password
-      },
-      createdAt: new Date().toISOString()
-    };
-    const updatedPersonal = [...personal, newEmployee];
-    setPersonal(updatedPersonal);
-    localStorage.setItem('axon_personal', JSON.stringify(updatedPersonal));
-    return newEmployee;
-  };
+      if (terminalsData?.length > 0) {
+        const activeTerminal = terminalsData.find(t => t.activo) || terminalsData[0];
+        if (activeTerminal) {
+          setCurrentTerminal(activeTerminal);
+          localStorage.setItem('axon_terminal', JSON.stringify(activeTerminal));
+        }
+      }
+    } catch (err) {
+      console.error('Failed to load terminals:', err);
+      setError(err.message);
+    }
+  }, []);
 
-  const updateEmployee = (id, employeeData) => {
-    const updatedPersonal = personal.map(emp =>
-      emp.id === id ? { ...emp, ...employeeData } : emp
-    );
-    setPersonal(updatedPersonal);
-    localStorage.setItem('axon_personal', JSON.stringify(updatedPersonal));
-  };
+  const loadSedes = useCallback(async () => {
+    try {
+      const sedesData = await sedesService.getAllSedes();
+      setSedes(sedesData);
 
-  const deleteEmployee = (id) => {
-    const updatedPersonal = personal.filter(emp => emp.id !== id);
-    setPersonal(updatedPersonal);
-    localStorage.setItem('axon_personal', JSON.stringify(updatedPersonal));
-  };
+      if (sedesData.length > 0) {
+        const savedSede = localStorage.getItem('axon_sede');
+        let sedeToSelect;
 
-  const getEmployeeById = (id) => {
+        if (savedSede) {
+          const parsedSede = JSON.parse(savedSede);
+          sedeToSelect = sedesData.find(s => s.id === parsedSede.id) || sedesData[0];
+        } else {
+          sedeToSelect = sedesData[0];
+        }
+
+        setCurrentSede(sedeToSelect);
+        localStorage.setItem('axon_sede', JSON.stringify(sedeToSelect));
+        localStorage.setItem('axon_sede_id', sedeToSelect.id);
+      }
+    } catch (err) {
+      console.error('Failed to load sedes:', err);
+      setError(err.message);
+    }
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem('axon_token');
+    const savedUser = localStorage.getItem('axon_user');
+
+    if (token && !user) {
+      authService.getMe()
+        .then(userData => {
+
+          setUser(userData);
+        })
+        .catch(err => {
+          console.error('Failed to restore user session:', err);
+          if (err.status === 401 || err.message.includes('401')) {
+
+            localStorage.removeItem('axon_token');
+            localStorage.removeItem('axon_user');
+            localStorage.removeItem('axon_expires_in');
+          }
+        });
+    } else if (savedUser && !user) {
+      try {
+        const userData = JSON.parse(savedUser);
+        setUser(userData);
+
+      } catch (err) {
+        console.error('Failed to parse saved user:', err);
+        localStorage.removeItem('axon_user');
+      }
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user && user.rol === 'PROPIETARIO') {
+      loadPersonal();
+      loadSedes();
+      loadTerminals();
+    }
+  }, [user, loadPersonal, loadSedes, loadTerminals]);
+
+  const login = useCallback(async (email, password) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await authService.login(email, password);
+      const usuario = response.usuario || response;
+      const userWithRole = {
+        ...usuario,
+        rol: usuario.rol || 'MESERO'
+      };
+
+      const token = response.token || localStorage.getItem('axon_token');
+      if (token) {
+        localStorage.setItem('axon_token', token);
+      }
+      localStorage.setItem('axon_user', JSON.stringify(userWithRole));
+      if (response.expires_in) {
+        localStorage.setItem('axon_expires_in', response.expires_in);
+      }
+
+      setUser(userWithRole);
+      return userWithRole;
+    } catch (err) {
+      console.error('Login failed:', err);
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const logout = useCallback(async () => {
+    setLoading(true);
+    try {
+      await authService.logout();
+
+      localStorage.clear();
+      setUser(null);
+      setPersonal([]);
+      setSedes([]);
+      setCurrentSede(null);
+      setTerminals([]);
+      setCurrentTerminal(null);
+    } catch (err) {
+      console.error('Logout error:', err);
+      localStorage.clear();
+      setUser(null);
+      setPersonal([]);
+      setSedes([]);
+      setCurrentSede(null);
+      setTerminals([]);
+      setCurrentTerminal(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const changeSede = useCallback(async (sede) => {
+    setCurrentSede(sede);
+    localStorage.setItem('axon_sede', JSON.stringify(sede));
+    localStorage.setItem('axon_sede_id', sede.id);
+    if (user?.rol === 'PROPIETARIO') {
+      await loadPersonal();
+      await loadTerminals();
+    }
+  }, [user, loadPersonal, loadTerminals]);
+
+  const changeTerminal = useCallback((terminal) => {
+    if (!terminal || !terminal.id) {
+      console.warn('Invalid terminal');
+      return;
+    }
+    setCurrentTerminal(terminal);
+    localStorage.setItem('axon_terminal', JSON.stringify(terminal));
+
+  }, []);
+
+  const createSede = useCallback(async (sedeData) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const newSede = await sedesService.createSede(sedeData);
+      setSedes(prev => [...prev, newSede]);
+      return newSede;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const addEmployee = useCallback(async (employeeData) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await authService.register(
+        employeeData.nombre,
+        employeeData.email,
+        employeeData.password,
+        employeeData.rol,
+        employeeData.telefono
+      );
+      await loadPersonal();
+      return response;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [loadPersonal]);
+
+  const updateEmployee = useCallback(async (id, employeeData) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await usersService.updateUser(id, employeeData);
+      await loadPersonal();
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [loadPersonal]);
+
+  const deleteEmployee = useCallback(async (id) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await usersService.deleteUser(id);
+      await loadPersonal();
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [loadPersonal]);
+
+  const getEmployeeById = useCallback((id) => {
     return personal.find(emp => emp.id === id);
-  };
+  }, [personal]);
 
   const value = {
     user,
     personal,
+    sedes,
+    currentSede,
+    terminals,
+    currentTerminal,
+    loading,
+    error,
     login,
     logout,
     addEmployee,
     updateEmployee,
     deleteEmployee,
-    getEmployeeById
+    getEmployeeById,
+    loadPersonal,
+    changeSede,
+    createSede,
+    loadSedes,
+    loadTerminals,
+    changeTerminal
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

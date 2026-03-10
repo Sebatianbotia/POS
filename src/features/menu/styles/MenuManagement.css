@@ -1,4 +1,3 @@
-
 .menu-container {
   width: 100%;
   height: 100%;
@@ -92,6 +91,40 @@
 .plus-icon {
   font-size: 1.2rem;
   font-weight: bold;
+}
+
+/* ============================================
+   TABS
+   ============================================ */
+
+.menu-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 0.75rem;
+}
+
+.menu-tab-btn {
+  padding: 0.6rem 1.25rem;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #888;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.menu-tab-btn:hover {
+  color: #fff;
+}
+
+.menu-tab-btn.active {
+  color: #ff9800;
+  border-bottom-color: #ff9800;
+  font-weight: 600;
 }
 
 /* ============================================
@@ -341,6 +374,7 @@
     transform: translateY(20px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
