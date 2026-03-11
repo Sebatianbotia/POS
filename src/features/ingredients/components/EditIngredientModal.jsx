@@ -17,7 +17,7 @@ export default function EditIngredientModal({ ingredient, onClose, onSuccess }) 
     motivo: ''
   });
 
-  const [errors, setErrors] = useState();
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
   const unitOptions = ['kg', 'g', 'l', 'ml', 'unidad', 'docena', 'paquete'];

@@ -108,6 +108,32 @@ export const authService = {
   },
 
 
+  async switchSede(sede_id) {
+    const response = await fetch(`${API_BASE_URL}/auth/switch-sede`, {
+      method: 'POST',
+      headers: getAuthHeader(),
+      body: JSON.stringify({ sede_id: Number(sede_id) })
+    });
+    const data = await handleApiResponse(response);
+
+    if (data.success && data.data) {
+      const token = data.data.token;
+      const expiresIn = data.data.expires_in;
+
+      if (token) {
+        localStorage.setItem('axon_token', token);
+      }
+      if (expiresIn) {
+        localStorage.setItem('axon_expires_in', expiresIn);
+      }
+
+      return data.data;
+    }
+
+    throw new Error('Switch sede response missing necessary token');
+  },
+
+
   async refreshToken(refresh_token) {
     const body = refresh_token ? { refresh_token } : {};
     const response = await fetch(`${API_BASE_URL}/auth/refresh`, {

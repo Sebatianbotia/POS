@@ -1,5 +1,4 @@
-
-const API_BASE_URL = 'http://72.61.73.95:8080';
+const API_BASE_URL = 'http://localhost:8080';
 
 export const getAuthHeader = () => {
   const token = localStorage.getItem('axon_token');
@@ -51,6 +50,8 @@ export const handleApiResponse = async (response, retry) => {
       localStorage.removeItem('axon_token');
       localStorage.removeItem('axon_user');
       localStorage.removeItem('axon_expires_in');
+      localStorage.removeItem('axon_sede');
+      localStorage.removeItem('axon_sede_id');
     }
     const errorMessage = errorData.message || errorData.error || `API Error: ${response.status}`;
     const error = new Error(errorMessage);

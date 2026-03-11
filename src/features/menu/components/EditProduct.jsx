@@ -19,7 +19,7 @@ export default function EditProduct({ product, onClose }) {
     icon: product.icon || '️'
   });
   const [selectedIngredients, setSelectedIngredients] = useState(product.ingredients || []);
-  const [errors, setErrors] = useState();
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const loadCategories = async () => {

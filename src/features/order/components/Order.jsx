@@ -13,7 +13,7 @@ export default function Order({ mesa, close, addItemsToTable, updateMesaState })
   const [order, setOrder] = useState(null);
   const [orderStatus, setOrderStatus] = useState(null);
   const [categories, setCategories] = useState([]);
-  const [notes, setNotes] = useState();
+  const [notes, setNotes] = useState({});
 
   useEffect(() => {
     const loadMenu = async () => {
@@ -116,7 +116,7 @@ export default function Order({ mesa, close, addItemsToTable, updateMesaState })
         menu_item_name: product.name || product.nombre,
         precio: Number(product.precio || product.sales_price || product.price || 0),
         quantity: 1,
-        notas: notes[product.id] || ''
+        notas: (notes && notes[product.id]) || ''
       }];
     });
   }

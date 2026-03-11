@@ -69,8 +69,20 @@ export function AuthProvider({ children }) {
           const parsedSede = JSON.parse(savedSede);
           sedeToSelect = sedesData.find(s => s.id === parsedSede.id) || sedesData[0];
         } else {
-          sedeToSelect = sedesData[0];
+          // If no saved sede, check what the user's bound venue_id is!
+          const currentUser = JSON.parse(localStorage.getItem('axon_user') || '{}');
+          console.log("[AuthContext] loadSedes - Buscando sede por defecto. Usuario logueado:", currentUser);
+          
+          if (currentUser && currentUser.venue_id) {
+             sedeToSelect = sedesData.find(s => s.id === currentUser.venue_id) || sedesData[0];
+             console.log("[AuthContext] loadSedes - Asignando Sede coincidente con venue_id del token:", sedeToSelect);
+          } else {
+             sedeToSelect = sedesData[0];
+             console.log("[AuthContext] loadSedes - Sin venue_id en usuario, forzando sedesData[0]:", sedeToSelect);
+          }
         }
+
+        console.log("[AuthContext] Sede Finalmente Establecida Visualmente y en Memoria:", sedeToSelect);
 
         setCurrentSede(sedeToSelect);
         localStorage.setItem('axon_sede', JSON.stringify(sedeToSelect));
@@ -99,6 +111,8 @@ export function AuthProvider({ children }) {
             localStorage.removeItem('axon_token');
             localStorage.removeItem('axon_user');
             localStorage.removeItem('axon_expires_in');
+            localStorage.removeItem('axon_sede');
+            localStorage.removeItem('axon_sede_id');
           }
         });
     } else if (savedUser && !user) {
@@ -133,6 +147,31 @@ export function AuthProvider({ children }) {
       };
 
       const token = response.token || localStorage.getItem('axon_token');
+      
+      // DECODE JWT TOKEN TO EXTRACT TRUE VENUE ID
+      if (token) {
+        try {
+          const base64Url = token.split('.')[1];
+          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+          const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+              return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          }).join(''));
+          const tokenData = JSON.parse(jsonPayload);
+          
+          if (tokenData.venue_id) {
+            userWithRole.venue_id = parseInt(tokenData.venue_id, 10);
+            console.log("[AuthContext] Login - Extraído venue_id del token:", userWithRole.venue_id);
+          }
+        } catch (e) {
+          console.error("[AuthContext] Error decoding token to extract venue_id", e);
+        }
+      }
+
+      // Always purge legacy Sede cache on a completely fresh login
+      // so `loadSedes` picks the safe default.
+      localStorage.removeItem('axon_sede');
+      localStorage.removeItem('axon_sede_id');
+
       if (token) {
         localStorage.setItem('axon_token', token);
       }
@@ -179,14 +218,31 @@ export function AuthProvider({ children }) {
   }, []);
 
   const changeSede = useCallback(async (sede) => {
-    setCurrentSede(sede);
-    localStorage.setItem('axon_sede', JSON.stringify(sede));
-    localStorage.setItem('axon_sede_id', sede.id);
-    if (user?.rol === 'PROPIETARIO') {
-      await loadPersonal();
-      await loadTerminals();
+    try {
+      setLoading(true);
+      
+      const result = await authService.switchSede(sede.id);
+      if (result && result.user) {
+         setUser(result.user);
+         localStorage.setItem('axon_user', JSON.stringify(result.user));
+      }
+      
+      // Update local storage strictly, DO NOT update React State! 
+      // Mutating React state triggers child re-renders (like AdminLayout's loadMesas) 
+      // racing against the reload with an old token cache mapping.
+      localStorage.setItem('axon_sede', JSON.stringify(sede));
+      localStorage.setItem('axon_sede_id', sede.id);
+
+      // Force instant clean wipe of React memory lifecycle.
+      window.location.reload();
+      
+    } catch (err) {
+      console.error('Error changing sede:', err);
+      alert(`No se pudo cambiar de sede: ${err.message}`);
+    } finally {
+      setLoading(false);
     }
-  }, [user, loadPersonal, loadTerminals]);
+  }, []);
 
   const changeTerminal = useCallback((terminal) => {
     if (!terminal || !terminal.id) {

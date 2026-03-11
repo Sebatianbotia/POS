@@ -10,7 +10,6 @@ export const tablesService = {
       headers: getAuthHeader()
     });
     const data = await handleApiResponse(response);
-    
     return data.data || [];
   },
 
