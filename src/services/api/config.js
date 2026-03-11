@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = 'http://72.61.73.95:8080';
 
 export const getAuthHeader = () => {
   const token = localStorage.getItem('axon_token');
