@@ -5,7 +5,7 @@ import usersService from '../../../services/api/usersService';
 import '../styles/PersonnelManagement.css';
 
 export default function PersonnelManagement() {
-  const { personal, loading: authLoading, deleteEmployee, loadPersonal } = useAuth();
+  const { personal, user, loading: authLoading, deleteEmployee, loadPersonal } = useAuth();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isQuickWaiterOpen, setIsQuickWaiterOpen] = useState(false);
   const [showCredentialsModal, setShowCredentialsModal] = useState(false);
@@ -430,13 +430,15 @@ export default function PersonnelManagement() {
                     </span>
                   </td>
                   <td className="employee-actions">
-                    <button
-                      className="btn-delete"
-                      onClick={() => handleDelete(employee.id)}
-                      title="Eliminar usuario"
-                    >
-                      Eliminar
-                    </button>
+                    {user?.rol === 'PROPIETARIO' && employee.rol !== 'PROPIETARIO' && (
+                      <button
+                        className="btn-delete"
+                        onClick={() => handleDelete(employee.id)}
+                        title="Eliminar usuario"
+                      >
+                        Eliminar
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

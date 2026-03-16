@@ -34,8 +34,8 @@ export default function AddTableModal({ close, onCreate }) {
           <input
             className="addtable-input"
             value={number}
-            onChange={(e) => setNumber(e.target.value)}
-            placeholder="Ej. Mesa 14"
+            onChange={(e) => setNumber(e.target.value.replace(/[^0-9]/g, ''))}
+            placeholder="Ej. 14"
             type="text"
           />
 

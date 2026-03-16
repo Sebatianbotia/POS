@@ -89,8 +89,7 @@ export default function PaymentModal({ mesa, onClose, onPaymentComplete }) {
       metodoPago: metodoPago,
       fecha: new Date(),
       descripcion: `Mesa ${mesa.number} - ${mesa.items?.length || 0} items`,
-      terminalId: currentTerminal.id,
-      descripcion: `Mesa ${mesa.number} - ${mesa.items?.length || 0} items`
+      terminalId: currentTerminal.id
     });
 
     setProcessing(false);
