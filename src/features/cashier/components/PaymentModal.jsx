@@ -84,13 +84,13 @@ export default function PaymentModal({ mesa, onClose, onPaymentComplete }) {
     onPaymentComplete({
       mesaId: mesa.id,
       orderId: mesa.currentOrderId,
-      monto: monto,
+      monto: montoTotal,
+      vuelto: monto - montoTotal,
       propina: propinaCalculada,
       metodoPago: metodoPago,
       fecha: new Date(),
       descripcion: `Mesa ${mesa.number} - ${mesa.items?.length || 0} items`,
-      terminalId: currentTerminal.id,
-      descripcion: `Mesa ${mesa.number} - ${mesa.items?.length || 0} items`
+      terminalId: currentTerminal.id
     });
 
     setProcessing(false);
@@ -104,10 +104,16 @@ export default function PaymentModal({ mesa, onClose, onPaymentComplete }) {
       const element = document.createElement('div');
       element.innerHTML = `
         <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 400px;">
-          <h2 style="text-align: center; margin-bottom: 20px;">FACTURA</h2>
-          <p><strong>Fecha:</strong> ${new Date().toLocaleString('es-CO')}</p>
-          <p><strong>Mesa:</strong> ${mesa.number}</p>
-          <p><strong>Mesero:</strong> ${mesa.waiter?.name || 'N/A'}</p>
+          <h2 style="text-align: center; margin-bottom: 5px; font-size: 16px;">FACTURA</h2>
+          <p style="text-align: center; margin: 5px 0; font-weight: bold; font-size: 14px;">AXON POS</p>
+          <p style="text-align: center; margin: 3px 0; font-size: 12px;">RUT/NIT: Restaurante</p>
+          <p style="text-align: center; margin: 3px 0; font-size: 12px;">Calle Principal 123, Piso 1</p>
+          <p style="text-align: center; margin: 5px 0; font-size: 11px; color: #666;">Terminal: ${currentTerminal?.nombre || 'Sin terminal'}</p>
+          <hr style="border: 1px solid #ccc; margin: 15px 0;">
+          
+          <p style="margin: 5px 0;"><strong>Fecha:</strong> ${new Date().toLocaleString('es-CO')}</p>
+          <p style="margin: 5px 0;"><strong>Mesa:</strong> ${mesa.number}</p>
+          <p style="margin: 5px 0;"><strong>Comensales:</strong> ${mesa.guests || '—'}</p>
           <hr style="border: 1px solid #ccc; margin: 15px 0;">
           
           <h3 style="font-size: 14px; margin-bottom: 10px;">Detalles de la Orden</h3>
@@ -123,7 +129,7 @@ export default function PaymentModal({ mesa, onClose, onPaymentComplete }) {
               ${mesa.items?.map(item => `
                 <tr style="border-bottom: 1px solid #eee;">
                   <td style="padding: 5px;">${item.name || 'Producto'}</td>
-                  <td style="text-align: right; padding: 5px;">${item.quantity || 1}</td>
+                  <td style="text-align: right; padding: 5px;">${item.quantity || item.qty || 1}</td>
                   <td style="text-align: right; padding: 5px;">$${((item.precio || item.price || 0) * (item.quantity || item.qty || 1)).toLocaleString()}</td>
                 </tr>
               `).join('') || '<tr><td colspan="3" style="padding: 5px;">Sin items</td></tr>'}
@@ -157,8 +163,15 @@ export default function PaymentModal({ mesa, onClose, onPaymentComplete }) {
             <span>${metodoPago}</span>
           </p>
 
-          ${monto !== montoTotal ? `
+          ${monto > 0 ? `
             <p style="display: flex; justify-content: space-between; margin: 15px 0; font-size: 14px;">
+              <span>Monto Entregado:</span>
+              <span>$${monto.toLocaleString()}</span>
+            </p>
+          ` : ''}
+
+          ${monto > montoTotal ? `
+            <p style="display: flex; justify-content: space-between; margin: 15px 0; font-size: 14px; color: #48d17a; font-weight: bold;">
               <span>Cambio:</span>
               <span>$${(monto - montoTotal).toLocaleString()}</span>
             </p>

@@ -13,7 +13,7 @@ export default function Order({ mesa, close, addItemsToTable, updateMesaState })
   const [order, setOrder] = useState(null);
   const [orderStatus, setOrderStatus] = useState(null);
   const [categories, setCategories] = useState([]);
-  const [notes, setNotes] = useState();
+  const [notes, setNotes] = useState({});
 
   useEffect(() => {
     const loadMenu = async () => {
@@ -22,19 +22,24 @@ export default function Order({ mesa, close, addItemsToTable, updateMesaState })
         const items = await menuService.getMenu();
         setMenuItems(items);
 
-        const uniqueCategories = [
-          { id: 0, name: "Todos", slug: "todos" },
-          ...Array.from(
-            new Map(
-              (items || []).map(item => [item.categoria || item.category, {
+        const categoryMap = new Map();
+        categoryMap.set('todos', { id: 0, name: "Todos", slug: "todos" });
+
+        (items || []).forEach(item => {
+          const catName = item.categoria || item.category;
+          if (catName) {
+            const slug = catName.toLowerCase().replace(/\s+/g, '-');
+            if (!categoryMap.has(slug)) {
+              categoryMap.set(slug, {
                 id: item.categoria_id || item.category_id || Math.random(),
-                name: item.categoria || item.category || "Sin categoría",
-                slug: (item.categoria || item.category || "sin-categoria").toLowerCase().replace(/\s+/g, '-')
-              }])
-            ).values()
-          )
-        ];
-        setCategories(uniqueCategories);
+                name: catName,
+                slug: slug
+              });
+            }
+          }
+        });
+
+        setCategories(Array.from(categoryMap.values()));
       } catch (err) {
         console.error('Error loading menu:', err);
         alert('Error al cargar el menú');
@@ -91,8 +96,10 @@ export default function Order({ mesa, close, addItemsToTable, updateMesaState })
   const filteredProducts = useMemo(() => {
     const s = search.toLowerCase();
     return menuItems.filter(p => {
-      const matchCategory = activeCategory === "todos" ||
-        (p.categoria || p.category || '').toLowerCase() === activeCategory.toLowerCase();
+      const itemCategory = (p.categoria || p.category || '').toLowerCase();
+      const activeCat = activeCategory.toLowerCase();
+      
+      const matchCategory = activeCat === "todos" || itemCategory === activeCat;
       const matchSearch = (p.name || p.nombre || '').toLowerCase().includes(s);
       return matchCategory && matchSearch;
     });
@@ -182,13 +189,17 @@ export default function Order({ mesa, close, addItemsToTable, updateMesaState })
         }
       }
 
-      const itemsToAdd = orderItems.map(item => ({
-        menu_item_id: String(item.menu_item_id || item.id),
-        cantidad: parseInt(item.quantity || item.qty || 1, 10),
-        notas: item.notas || ''
-      }));
+      const itemsToAdd = orderItems
+        .filter(item => !item.order_item_id)
+        .map(item => ({
+          menu_item_id: String(item.menu_item_id || item.id),
+          cantidad: parseInt(item.quantity || item.qty || 1, 10),
+          notas: item.notas || ''
+        }));
 
-      await ordersService.addOrderItems(currentOrder.id, itemsToAdd);
+      if (itemsToAdd.length > 0) {
+        await ordersService.addOrderItems(currentOrder.id, itemsToAdd);
+      }
 
       if (addItemsToTable) {
         addItemsToTable(orderItems.map(item => ({

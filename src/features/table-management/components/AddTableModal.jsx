@@ -34,9 +34,15 @@ export default function AddTableModal({ close, onCreate }) {
           <input
             className="addtable-input"
             value={number}
-            onChange={(e) => setNumber(e.target.value)}
-            placeholder="Ej. Mesa 14"
-            type="text"
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === '' || /^\d+$/.test(value)) {
+                setNumber(value);
+              }
+            }}
+            placeholder="Ej. 14"
+            type="number"
+            min="1"
           />
 
           <label className="addtable-label">Capacidad</label>

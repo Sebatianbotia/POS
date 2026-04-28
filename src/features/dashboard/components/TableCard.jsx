@@ -49,8 +49,14 @@ export default function TableCard({ mesa, setSelected, updateMesaState }) {
       )}
 
       {isReserved && (
-        <div className="table-center">
+        <div className="table-card-content">
           <h3 className="table-title">{number}</h3>
+
+          <ul className="table-info">
+            <li><span className="icon"></span> Mesero: {waiter?.name ?? 'Sin asignar'}</li>
+            <li><span className="icon"></span> {guests ?? 0} Comensales</li>
+          </ul>
+
           <p className="status-reserved-text">Reservada</p>
         </div>
       )}

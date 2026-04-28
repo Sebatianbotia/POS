@@ -15,8 +15,11 @@ export const terminalesService = {
   },
 
   
-  async getAllTerminals() {
-    const response = await fetch(`${API_BASE_URL}/terminales`, {
+  async getAllTerminals(includeInactive = true) {
+    const url = includeInactive 
+      ? `${API_BASE_URL}/terminales?todas=true` 
+      : `${API_BASE_URL}/terminales`;
+    const response = await fetch(url, {
       method: 'GET',
       headers: getAuthHeader()
     });

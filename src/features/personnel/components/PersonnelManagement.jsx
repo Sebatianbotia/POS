@@ -102,6 +102,8 @@ export default function PersonnelManagement() {
   };
 
   const [quickWaiterData, setQuickWaiterData] = useState({ nombre: '', email: '' });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showQuickPassword, setShowQuickPassword] = useState(false);
 
   const handleQuickWaiterSubmit = async (e) => {
     e.preventDefault();
@@ -202,15 +204,25 @@ export default function PersonnelManagement() {
 
                 <div className="form-group">
                   <label>Contraseña * (mín. 8 caracteres)</label>
-                  <input
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    placeholder="Contraseña segura"
-                    minLength="8"
-                    required
-                  />
+                  <div className="password-input-wrapper">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      placeholder="Contraseña segura"
+                      minLength="8"
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="toggle-password-btn"
+                      onClick={() => setShowPassword(!showPassword)}
+                      title={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                    >
+                      {showPassword ? "👁️‍🗨️" : "👁️"}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="form-row">

@@ -23,7 +23,6 @@ export default function TerminalSelector({ onTerminalSelected }) {
       const activeTerminals = (data || []).filter(t => t.activo !== false);
       setTerminals(activeTerminals);
 
-      
       if (activeTerminals.length > 0) {
         setSelectedTerminalId(activeTerminals[0].id);
       }

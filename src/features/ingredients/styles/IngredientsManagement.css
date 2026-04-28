@@ -327,20 +327,22 @@
 .modal-close-btn {
   width: 34px;
   height: 34px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 50%;
-  color: var(--ios-text-main);
+  background: rgba(252, 173, 64, 0.2);
+  border: 1.5px solid rgba(252, 173, 64, 0.4);
+  border-radius: 8px;
+  color: var(--ios-accent);
   font-size: 18px;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .modal-close-btn:hover {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(252, 173, 64, 0.35);
+  border-color: var(--ios-accent);
+  transform: rotate(90deg);
 }
 
 /* ===== FORM ===== */

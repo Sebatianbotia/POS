@@ -22,12 +22,13 @@ export default function OrderDetailModal({ order, mesa, onClose, onCharge, canCh
     if (loadingAction) return;
     try {
       setLoadingAction(true);
+      // Petición silenciosa al backend para gestionar impresión desde servidor/caja
       await ordersService.updateOrderStatus(order.id, 2);
       await ordersService.sendToKitchen(order.id);
       setLocalEstado('enviada');
       if (onOrderUpdate) onOrderUpdate();
 
-      generarComanda(); 
+      alert('Pedido enviado a cocina. La impresión se gestiona desde caja.');
     } catch (err) {
       alert(`Error al enviar a cocina: ${err.message}`);
     } finally {
@@ -72,57 +73,67 @@ export default function OrderDetailModal({ order, mesa, onClose, onCharge, canCh
   const impuesto = 0;
   const total = subtotal;
 
-  const generarComanda = async () => {
-    try {
-      const html2pdf = await import('html2pdf.js');
-
-      const element = document.createElement('div');
-      element.innerHTML = `
-        <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 400px; color: #000;">
-          <h2 style="text-align: center; margin-bottom: 20px;">COMANDA DE COCINA</h2>
-          <p><strong>Mesa:</strong> ${mesa.number}</p>
-          <p><strong>Mesero:</strong> ${mesa.waiter?.name || 'N/A'}</p>
-          <p><strong>Hora:</strong> ${new Date().toLocaleTimeString('es-CO')}</p>
-          <hr style="border: 1px dashed #000; margin: 15px 0;">
-          
-          <h3 style="font-size: 14px; margin-bottom: 10px;">Productos</h3>
-          <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-            <thead>
-              <tr style="border-bottom: 1px solid #ccc;">
-                <th style="text-align: left; padding: 5px; width: 40px;">Cant</th>
-                <th style="text-align: left; padding: 5px;">Descripción</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${localItems.map(item => `
-                <tr style="border-bottom: 1px dotted #ccc;">
-                  <td style="padding: 5px; vertical-align: top; font-weight: bold;">${item.qty || 1}x</td>
-                  <td style="padding: 5px;">
-                    ${item.name || item.nombre || 'Producto'}
-                    ${item.notas ? `<div style="font-size: 12px; font-style: italic; color: #555; margin-top: 4px;">• Notas: ${item.notas}</div>` : ''}
-                  </td>
+  const handlePrintSlip = () => {
+    // Abre el diálogo de impresión del navegador si el usuario lo requiere explícitamente
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>Comanda Mesa ${mesa.number}</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 0; padding: 20px; color: #000; }
+            .container { max-width: 400px; }
+            h2 { text-align: center; margin-bottom: 20px; font-size: 18px; }
+            p { margin: 8px 0; font-size: 14px; }
+            hr { border: 1px dashed #000; margin: 15px 0; }
+            table { width: 100%; border-collapse: collapse; font-size: 14px; }
+            th { text-align: left; padding: 5px; border-bottom: 1px solid #ccc; font-weight: bold; }
+            td { padding: 5px; vertical-align: top; }
+            tr { border-bottom: 1px dotted #ccc; }
+            .qty { font-weight: bold; width: 40px; }
+            .notes { font-size: 12px; font-style: italic; color: #555; margin-top: 4px; }
+            .footer { text-align: center; font-weight: bold; margin-top: 15px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h2>COMANDA DE COCINA</h2>
+            <p><strong>Mesa:</strong> ${mesa.number}</p>
+            <p><strong>Mesero:</strong> ${mesa.waiter?.name || 'N/A'}</p>
+            <p><strong>Hora:</strong> ${new Date().toLocaleTimeString('es-CO')}</p>
+            <hr>
+            <h3 style="font-size: 14px; margin-bottom: 10px;">Productos</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th class="qty">Cant</th>
+                  <th>Descripción</th>
                 </tr>
-              `).join('')}
-            </tbody>
-          </table>
-
-          <hr style="border: 1px dashed #000; margin: 15px 0;">
-          <p style="text-align: center; font-size: 14px; font-weight: bold;">Preparar para Mesa ${mesa.number}</p>
-        </div>
-      `;
-
-      const opt = {
-        margin: 5,
-        filename: `comanda-mesa-${mesa.number}-${Date.now()}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a6', orientation: 'portrait' }
-      };
-
-      html2pdf.default().set(opt).from(element).save();
-    } catch (err) {
-      console.error('Error al generar la comanda PDF:', err);
-    }
+              </thead>
+              <tbody>
+                ${localItems.map(item => `
+                  <tr>
+                    <td class="qty">${item.qty || 1}x</td>
+                    <td>
+                      ${item.name || item.nombre || 'Producto'}
+                      ${item.notas ? `<div class="notes">• Notas: ${item.notas}</div>` : ''}
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+            <hr>
+            <div class="footer">Preparar para Mesa ${mesa.number}</div>
+          </div>
+        </body>
+      </html>
+    `;
+    
+    const printWindow = window.open('', '', 'height=600,width=800');
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    printWindow.print();
   };
 
   const STATUS_LABEL = {
@@ -235,13 +246,22 @@ export default function OrderDetailModal({ order, mesa, onClose, onCharge, canCh
 
             
             {localEstado === 'enviada' && (
-              <button
-                className="btn-mark-ready"
-                onClick={handleMarkAsReady}
-                disabled={loadingAction}
-              >
-                {loadingAction ? 'Marcando...' : ' Marcar como Lista'}
-              </button>
+              <>
+                <button
+                  className="btn-mark-ready"
+                  onClick={handleMarkAsReady}
+                  disabled={loadingAction}
+                >
+                  {loadingAction ? 'Marcando...' : ' Marcar como Lista'}
+                </button>
+                <button
+                  className="btn-print-slip"
+                  onClick={handlePrintSlip}
+                  title="Abre el diálogo de impresión del navegador"
+                >
+                   Imprimir Comanda
+                </button>
+              </>
             )}
 
             {canCharge && localEstado !== 'cancelada' && localEstado !== 'pagada' && (

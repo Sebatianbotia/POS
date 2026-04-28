@@ -174,6 +174,41 @@
   color: rgba(255, 255, 255, 0.4);
 }
 
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  padding-right: 45px;
+}
+
+.toggle-password-btn {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ios-text-muted);
+  transition: color 0.2s ease;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  user-select: none;
+}
+
+.toggle-password-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--ios-accent);
+}
+
 .position-option {
   background: var(--glass-bg);
   color: black;
@@ -485,6 +520,46 @@
 
   .personnel-table th {
     padding: 12px 8px;
+  }
+
+  .personnel-form-modal {
+    width: 95%;
+    margin: 0 auto;
+    padding: 24px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 10px 12px;
+    font-size: 16px;
+  }
+
+  .password-input-wrapper input {
+    padding-right: 40px;
+  }
+
+  .toggle-password-btn {
+    right: 10px;
+    font-size: 16px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn-cancel,
+  .btn-submit {
+    width: 100%;
+  }
+
+  .personnel-table-wrapper {
+    overflow-x: auto;
+  }
+
+  .personnel-table {
+    font-size: 12px;
   }
 }
 

@@ -105,13 +105,18 @@ export default function TerminalsManagement() {
   const handleDeleteTerminal = async (terminalId) => {
     if (!window.confirm('¿Estás seguro de que quieres eliminar esta terminal?')) return;
 
+    setSubmitting(true);
     try {
-      setSubmitting(true);
       await terminalesService.deleteTerminal(terminalId);
       await loadTerminals();
+      setError(null);
     } catch (err) {
       console.error('Error deleting terminal:', err);
-      setError(`Error al eliminar: ${err.message}`);
+      if (err.status === 404) {
+        setError('No se pudo encontrar la terminal para eliminarla. Intenta recargando.');
+      } else {
+        setError(`Error al eliminar: ${err.message}`);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -153,7 +158,7 @@ export default function TerminalsManagement() {
       ) : (
         <div className="terminals-list">
           {terminals.map(terminal => (
-            <div key={terminal.id} className="terminal-card">
+            <div key={terminal.id} className={`terminal-card ${!terminal.activo ? 'inactive' : ''}`}>
               <div className="terminal-card-header">
                 <h3 className="terminal-card-title">{terminal.nombre}</h3>
                 <span className={`status-badge ${terminal.activo ? 'active' : 'inactive'}`}>

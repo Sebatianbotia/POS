@@ -9,6 +9,9 @@ export default function TableData({ mesa, updateMesaState, close, setShowOrder }
   const [newGuests, setNewGuests] = useState('');
   const [showWaiterPicker, setShowWaiterPicker] = useState(false);
   const [pendingGuests, setPendingGuests] = useState(null);
+  const [showStateSelector, setShowStateSelector] = useState(false);
+  const [isAssigningWaiterToReserved, setIsAssigningWaiterToReserved] = useState(false);
+  const [reservedGuests, setReservedGuests] = useState(mesa.guests || '');
 
   const { user } = useAuth();
 
@@ -25,26 +28,29 @@ export default function TableData({ mesa, updateMesaState, close, setShowOrder }
 
   const isFree = state === 'LIBRE' || state === 'available';
   const isBusy = state === 'OCUPADA';
+  const isReserved = state === 'RESERVADA';
 
   const { openTable, closeTable } = useTableOperations();
 
   const items = mesa.items || [];
 
   
-  const executeOpenTable = async (guestsNum, waiterInfo) => {
+  const executeOpenTable = async (guestsNum, waiterInfo, changeStatus = true) => {
     try {
-      
-      await tablesService.updateTableStatus(id, 'OCUPADA');
-
-      
+      if (changeStatus) {
+        await tablesService.updateTableStatus(id, 'OCUPADA');
+      }
       
       if (user?.rol !== 'MESERO') {
         await tablesService.assignWaiter(id, waiterInfo.id);
       }
 
-      
-      const updates = openTable(guestsNum, waiterInfo);
-      updateMesaState(id, { ...updates, waiter: waiterInfo });
+      if (changeStatus) {
+        const updates = openTable(guestsNum, waiterInfo);
+        updateMesaState(id, { ...updates, waiter: waiterInfo });
+      } else {
+        updateMesaState(id, { waiter: waiterInfo });
+      }
       close();
     } catch (err) {
       console.error('Error opening table:', err);
@@ -70,23 +76,60 @@ export default function TableData({ mesa, updateMesaState, close, setShowOrder }
   
   const handleWaiterSelected = async (selectedWaiter) => {
     setShowWaiterPicker(false);
-    await executeOpenTable(pendingGuests, { id: selectedWaiter.id, name: selectedWaiter.nombre });
+    const changeStatus = !isAssigningWaiterToReserved;
+    await executeOpenTable(pendingGuests, { id: selectedWaiter.id, name: selectedWaiter.nombre }, changeStatus);
     setPendingGuests(null);
+    setIsAssigningWaiterToReserved(false);
   };
 
-  
-  const handleChangeState = async () => {
+  const handleChangeState = async (newStatus) => {
     try {
-      await tablesService.updateTableStatus(id, 'LIBRE');
-      const closedTable = closeTable();
-      updateMesaState(id, closedTable);
+      await tablesService.updateTableStatus(id, newStatus);
+      
+      let updates = {};
+      if (newStatus === 'LIBRE') {
+        updates = closeTable();
+      } else if (newStatus === 'OCUPADA') {
+        updates = { state: 'OCUPADA' };
+      } else if (newStatus === 'RESERVADA') {
+        updates = { state: 'RESERVADA', items: [], totalBill: 0, occupiedMinutes: null };
+      }
+      
+      updateMesaState(id, updates);
+      setShowStateSelector(false);
       close();
     } catch (err) {
       console.error('Error changing table state:', err);
-      
-      const closedTable = closeTable();
-      updateMesaState(id, closedTable);
+      alert(`Error al cambiar estado: ${err.message}`);
+    }
+  };
+
+  const handleDeleteTable = async () => {
+    if (!window.confirm(`¿Eliminar la mesa ${number}?`)) return;
+    
+    try {
+      await tablesService.deleteTable(id);
+      updateMesaState(id, { deleted: true });
       close();
+    } catch (err) {
+      console.error('Error deleting table:', err);
+      alert(`Error al eliminar mesa: ${err.message}`);
+    }
+  };
+
+  const handleSaveReservedGuests = async () => {
+    const guestsNum = Number(reservedGuests);
+    if (!Number.isFinite(guestsNum) || guestsNum <= 0) {
+      alert('Ingresa un número válido de comensales');
+      return;
+    }
+
+    try {
+      updateMesaState(id, { guests: guestsNum });
+      close();
+    } catch (err) {
+      console.error('Error saving reserved guests:', err);
+      alert(`Error al guardar comensales: ${err.message}`);
     }
   };
 
@@ -116,10 +159,53 @@ export default function TableData({ mesa, updateMesaState, close, setShowOrder }
             <button className="abrir-btn" onClick={handleOpenTable}>
               Abrir Mesa
             </button>
+
+            <button className="btn-delete" onClick={handleDeleteTable}>
+              Eliminar Mesa
+            </button>
           </div>
         )}
 
-        {isBusy && (
+        {isReserved && (!waiter || !guests) && (
+          <div className="mesa-disponible-panel">
+            <button className="close-modal-btn" onClick={close}>✕</button>
+
+            <h2 className="mesa-title">{number}</h2>
+            <p style={{ textAlign: 'center', color: 'var(--ios-text-muted)', fontSize: '14px', marginBottom: '20px' }}>Reservada</p>
+
+            {!guests && (
+              <>
+                <input
+                  type="number"
+                  placeholder="Número de comensales"
+                  className="comensales-input"
+                  value={reservedGuests}
+                  onChange={(e) => setReservedGuests(e.target.value)}
+                  min="1"
+                />
+
+                <button className="abrir-btn" onClick={handleSaveReservedGuests}>
+                  Guardar Comensales
+                </button>
+              </>
+            )}
+
+            {!waiter && (
+              <button className="abrir-btn" onClick={() => {
+                setIsAssigningWaiterToReserved(true);
+                setShowWaiterPicker(true);
+              }}>
+                Asignar Mesero
+              </button>
+            )}
+
+            <button className="btn-delete" onClick={handleDeleteTable}>
+              Eliminar Mesa
+            </button>
+          </div>
+        )}
+
+        {(isBusy || isReserved) && (
           <div className="tabledata-wrapper">
             <button className="close-modal-btn close-anim" onClick={close}>✕</button>
 
@@ -182,9 +268,17 @@ export default function TableData({ mesa, updateMesaState, close, setShowOrder }
                 Añadir a Pedido
               </button>
 
-              <button className="btn-change" onClick={handleChangeState}>
+              <button className="btn-change" onClick={() => setShowStateSelector(!showStateSelector)}>
                 Cambiar Estado
               </button>
+              
+              {showStateSelector && (
+                <div className="state-selector">
+                  <button className="state-option" onClick={() => handleChangeState('LIBRE')}>Disponible</button>
+                  <button className="state-option" onClick={() => handleChangeState('RESERVADA')}>Reservada</button>
+                  <button className="state-option" onClick={() => handleChangeState('OCUPADA')}>Ocupada</button>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -196,6 +290,7 @@ export default function TableData({ mesa, updateMesaState, close, setShowOrder }
           onCancel={() => {
             setShowWaiterPicker(false);
             setPendingGuests(null);
+            setIsAssigningWaiterToReserved(false);
           }}
         />
       )}

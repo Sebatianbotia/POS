@@ -118,6 +118,17 @@
   box-shadow: var(--shadow-strong);
 }
 
+.terminal-card.inactive {
+  opacity: 0.6;
+  filter: grayscale(0.5);
+}
+
+.terminal-card.inactive:hover {
+  background: var(--glass-bg);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: none;
+}
+
 .terminal-card-header {
   display: flex;
   justify-content: space-between;

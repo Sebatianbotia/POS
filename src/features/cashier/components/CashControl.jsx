@@ -1,9 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import OpenCashModal from './OpenCashModal';
 import '../styles/CashControl.css';
 
-export default function CashControl({ transacciones = [], onNewTransaction, onCloseSesion }) {
+export default function CashControl({ transacciones = [], onNewTransaction, onCloseTurno }) {
   const [showOpenModal, setShowOpenModal] = useState(false);
+  const [isCajaAbierta, setIsCajaAbierta] = useState(false);
+
+  useEffect(() => {
+    const cajaState = localStorage.getItem('cajaAbierta');
+    setIsCajaAbierta(cajaState === 'true');
+  }, []);
 
   const totalIngresos = transacciones
     .filter(t => t.tipo === 'INGRESO')
@@ -36,16 +42,30 @@ export default function CashControl({ transacciones = [], onNewTransaction, onCl
       ...data,
       tipo: data.tipo === 'ADMINISTRATIVA' ? 'EGRESO' : data.tipo
     });
+    localStorage.setItem('cajaAbierta', 'true');
+    setIsCajaAbierta(true);
     setShowOpenModal(false);
+  };
+
+  const handleCloseTurno = () => {
+    if (window.confirm('¿Cerrar el turno de caja? No podrás agregar más transacciones hasta abrir una nueva caja.')) {
+      localStorage.setItem('cajaAbierta', 'false');
+      setIsCajaAbierta(false);
+      if (onCloseTurno) {
+        onCloseTurno();
+      }
+    }
   };
 
   return (
     <div className="cash-control-container">
       <div className="cash-header">
         <h1 className="cash-title">Control de Caja</h1>
-        <button className="close-shift-btn" onClick={onCloseSesion}>
-          Cerrar Turno
-        </button>
+        {isCajaAbierta && (
+          <button className="close-shift-btn" onClick={handleCloseTurno}>
+            Cerrar Turno
+          </button>
+        )}
       </div>
 
       <div className="cash-stats">
@@ -68,12 +88,14 @@ export default function CashControl({ transacciones = [], onNewTransaction, onCl
       </div>
 
       <div className="cash-actions">
-        <button
-          className="action-btn ingreso"
-          onClick={() => setShowOpenModal(true)}
-        >
-          Abrir Caja
-        </button>
+        {!isCajaAbierta && (
+          <button
+            className="action-btn ingreso"
+            onClick={() => setShowOpenModal(true)}
+          >
+            Abrir Caja
+          </button>
+        )}
       </div>
 
       <div className="transactions-section">

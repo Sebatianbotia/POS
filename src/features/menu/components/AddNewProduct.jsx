@@ -19,7 +19,7 @@ export default function AddNewProduct({ onClose }) {
     icon: '️'
   });
   const [selectedIngredients, setSelectedIngredients] = useState([]);
-  const [errors, setErrors] = useState();
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const loadCategories = async () => {

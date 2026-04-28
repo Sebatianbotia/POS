@@ -202,6 +202,12 @@ export default function AdminLayout() {
     navigate('/auth');
   }
 
+  function handleCloseTurno() {
+    // Solo cierra el turno de caja, sin hacer logout
+    setTransacciones([]);
+    localStorage.setItem('cajaAbierta', 'false');
+  }
+
   const handleChangeSede = (sede) => {
     changeSede(sede);
     setCurrentSection('mesas');
@@ -270,7 +276,7 @@ export default function AdminLayout() {
           <CashControl
             transacciones={transacciones}
             onNewTransaction={handleNewTransaction}
-            onCloseSesion={closeSesion}
+            onCloseTurno={handleCloseTurno}
           />
         )}
         {currentSection === 'menu' && accessibleSections.includes('menu') && (

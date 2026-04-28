@@ -16,6 +16,7 @@ export default function TablePanel({ mesas: propMesas, setMesas: setPropMesas })
   const [showOrder, setShowOrder] = useState(false);
   const [localMesas, setLocalMesas] = useState([]);
   const [loadingTables, setLoadingTables] = useState(true);
+  const [filterState, setFilterState] = useState('todas');
 
   useEffect(() => {
     const loadTables = async () => {
@@ -120,6 +121,16 @@ export default function TablePanel({ mesas: propMesas, setMesas: setPropMesas })
     });
   }
 
+  const filteredMesas = mesas
+    .filter(mesa => !mesa.deleted)
+    .filter(mesa => {
+      if (filterState === 'todas') return true;
+      if (filterState === 'disponibles') return mesa.state === 'LIBRE' || mesa.state === 'available';
+      if (filterState === 'ocupadas') return mesa.state === 'OCUPADA';
+      if (filterState === 'reservadas') return mesa.state === 'RESERVADA';
+      return true;
+    });
+
   return (
     <div className="admin-container">
 
@@ -128,10 +139,30 @@ export default function TablePanel({ mesas: propMesas, setMesas: setPropMesas })
         <p className="admin-subtitle">Vista general del estado del salón.</p>
 
         <div className="admin-filters">
-          <button className="filter-btn active">Todas</button>
-          <button className="filter-btn green">Disponibles</button>
-          <button className="filter-btn blue">Ocupadas</button>
-          <button className="filter-btn yellow">Sucias</button>
+          <button 
+            className={`filter-btn ${filterState === 'todas' ? 'active' : ''}`}
+            onClick={() => setFilterState('todas')}
+          >
+            Todas
+          </button>
+          <button 
+            className={`filter-btn green ${filterState === 'disponibles' ? 'active' : ''}`}
+            onClick={() => setFilterState('disponibles')}
+          >
+            Disponibles
+          </button>
+          <button 
+            className={`filter-btn blue ${filterState === 'ocupadas' ? 'active' : ''}`}
+            onClick={() => setFilterState('ocupadas')}
+          >
+            Ocupadas
+          </button>
+          <button 
+            className={`filter-btn yellow ${filterState === 'reservadas' ? 'active' : ''}`}
+            onClick={() => setFilterState('reservadas')}
+          >
+            Reservadas
+          </button>
         </div>
         <div className='table-actions'>
           <button className="add-table-btn" onClick={() => setShowAddModal(true)}>
@@ -144,7 +175,7 @@ export default function TablePanel({ mesas: propMesas, setMesas: setPropMesas })
       <h2 className="room-title">Salón Principal</h2>
 
       <div className="tables-grid">
-        {mesas.map((mesa) => (
+        {filteredMesas.map((mesa) => (
           <TableCard
             key={mesa.id}
             mesa={mesa}
